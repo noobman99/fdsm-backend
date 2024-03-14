@@ -94,3 +94,32 @@ exports.logIn = async (req, res, next) => {
 
   res.status(200).json({ success: true, token });
 };
+
+exports.changePassword = async (req, res, next) => {
+  const { oldPassword, newPassword } = req.body;
+
+  if (!oldPassword || !newPassword) {
+    res.status(400).json({ success: false, error: "Fill all details." });
+  }
+
+  const restaurant = req.user;
+
+  const validPassword = await bcrypt.compare(oldPassword, restaurant.password);
+  if (!validPassword) {
+    return res
+      .status(400)
+      .json({ success: false, error: "Invalid previous password" });
+  }
+
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+  restaurant.password = hashedPassword;
+
+  await restaurant.save({
+    validateBeforeSave: true,
+    isNew: false,
+  });
+
+  res.status(200).json({ success: true });
+};
