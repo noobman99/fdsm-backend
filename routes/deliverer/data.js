@@ -1,6 +1,6 @@
 const express = require("express");
-const Deliverer = require("../models/Deliverer");
-const { formatDeliverer } = require("../helpers/DataFormatters");
+const Deliverer = require("../../models/Deliverer");
+const { formatDeliverer } = require("../../helpers/DataFormatters");
 
 const router = express.Router();
 

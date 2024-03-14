@@ -1,6 +1,6 @@
 const express = require("express");
-const Order = require("../models/Order");
-const { formatRestaurant } = require("../helpers/DataFormatters");
+const Order = require("../../models/Order");
+const { formatRestaurant } = require("../../helpers/DataFormatters");
 const router = express.Router();
 
 // Routes

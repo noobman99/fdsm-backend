@@ -1,15 +1,15 @@
 const express = require("express");
-const Restaurant = require("../models/Restaurant");
-const Customer = require("../models/Customer");
-const Deliverer = require("../models/Deliverer");
-const Order = require("../models/Order");
+const Restaurant = require("../../models/Restaurant");
+const Customer = require("../../models/Customer");
+const Deliverer = require("../../models/Deliverer");
+const Order = require("../../models/Order");
 const {
   formatManagement,
   formatCustomer,
   formatOrder,
   formatDeliverer,
   formatRestaurant,
-} = require("../helpers/DataFormatters");
+} = require("../../helpers/DataFormatters");
 
 const router = express.Router();
 
