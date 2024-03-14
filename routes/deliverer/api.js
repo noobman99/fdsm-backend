@@ -12,9 +12,3 @@ router.use("/signup", authEndpoints.signUp);
 // Data routes
 router.use("/info", dataEndpoints.info);
 router.use("/orders", dataEndpoints.orders);
-router.use("/favouriteRestaurants", dataEndpoints.favouriteRestaurants);
-router.use("/restaurants", dataEndpoints.restaurants);
-router.use("/restaurant/:id", dataEndpoints.restaurantById);
-router.use("/newOrder", dataEndpoints.newOrder);
-
-module.exports = router;

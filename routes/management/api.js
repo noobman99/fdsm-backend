@@ -11,10 +11,14 @@ router.use("/signup", authEndpoints.signUp);
 
 // Data routes
 router.use("/info", dataEndpoints.info);
-router.use("/orders", dataEndpoints.orders);
-router.use("/favouriteRestaurants", dataEndpoints.favouriteRestaurants);
+router.use("/customers", dataEndpoints.customers);
+router.use("/customer/:id", dataEndpoints.customerById);
+router.use("/orders/customer/:id", dataEndpoints.ordersByCustomer);
+router.use("/deliverers", dataEndpoints.deliverers);
+router.use("/deliverer/:id", dataEndpoints.delivererById);
+router.use("/orders/deliverer/:id", dataEndpoints.ordersByDeliverer);
 router.use("/restaurants", dataEndpoints.restaurants);
 router.use("/restaurant/:id", dataEndpoints.restaurantById);
-router.use("/newOrder", dataEndpoints.newOrder);
+router.use("/orders/restaurant/:id", dataEndpoints.ordersByRestaurant);
 
 module.exports = router;

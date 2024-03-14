@@ -5,23 +5,23 @@ const router = express.Router();
 
 // Routes
 
-router.get("/info", async (req, res, next) => {
+exports.info = async (req, res, next) => {
   // Customer info route
   let restaurant = req.user;
 
   let resJson = formatRestaurant(restaurant, true);
 
   res.json(resJson);
-});
+};
 
-router.get("/menu", async (req, res, next) => {
+exports.menu = async (req, res, next) => {
   // Restaurant menu route
   let restaurant = req.user;
 
   res.json(restaurant.menu);
-});
+};
 
-router.get("/orders", async (req, res, next) => {
+exports.orders = async (req, res, next) => {
   // Customer orders route
   let restaurant = req.user;
   let orders = await Order.find({ _id: { $in: restaurant.orders } });
@@ -33,9 +33,9 @@ router.get("/orders", async (req, res, next) => {
   }
 
   res.json(resJson);
-});
+};
 
-router.post("/addFoodItem", async (req, res, next) => {
+exports.addFoodItem = async (req, res, next) => {
   // Add food item route
   let restaurant = req.user;
 
@@ -53,6 +53,4 @@ router.post("/addFoodItem", async (req, res, next) => {
   });
 
   res.json({ message: "Food item added successfully" });
-});
-
-module.exports = router;
+};

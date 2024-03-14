@@ -58,7 +58,6 @@ exports.signUp = async (req, res, next) => {
       email,
       phone,
       password: hashedPassword,
-      isWorking: false,
     });
 
     const token = createToken(deliverer._id);
