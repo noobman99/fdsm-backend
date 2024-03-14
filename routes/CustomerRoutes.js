@@ -90,7 +90,10 @@ router.post("/newOrder", async (req, res, next) => {
   order = Order.create(order);
 
   customer.orders.push(order._id);
-  await customer.save();
+  await customer.save({
+    validateBeforeSave: true,
+    isNew: false,
+  });
 
   res.json({ message: "Order placed successfully" });
 });

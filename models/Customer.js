@@ -25,7 +25,6 @@ const customerSchema = new mongoose.Schema({
   },
   address: {
     type: String,
-    required: true,
   },
   orders: {
     type: [mongoose.Schema.Types.ObjectId],

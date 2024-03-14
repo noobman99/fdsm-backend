@@ -1,5 +1,4 @@
 const express = require("express");
-const Restaurant = require("../models/Restaurant");
 const Order = require("../models/Order");
 const { formatRestaurant } = require("../helpers/DataFormatters");
 const router = express.Router();
@@ -48,7 +47,10 @@ router.post("/addFoodItem", async (req, res, next) => {
 
   restaurant.menu.push(foodItem);
 
-  await restaurant.save();
+  await restaurant.save({
+    validateBeforeSave: true,
+    isNew: false,
+  });
 
   res.json({ message: "Food item added successfully" });
 });

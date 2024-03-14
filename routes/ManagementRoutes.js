@@ -1,5 +1,4 @@
 const express = require("express");
-const Management = require("../models/Management");
 const Restaurant = require("../models/Restaurant");
 const Customer = require("../models/Customer");
 const Deliverer = require("../models/Deliverer");
