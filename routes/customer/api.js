@@ -1,8 +1,12 @@
 const authEndpoints = require("./auth");
 const dataEndpoints = require("./data");
+const customerAuth = require("../../middleware/customerAuth");
 const express = require("express");
 
 const router = express.Router();
+
+// Middleware
+router.use(customerAuth);
 
 // Routes
 // Auth routes

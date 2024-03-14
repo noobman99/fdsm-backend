@@ -1,8 +1,12 @@
 const authEndpoints = require("./auth");
 const dataEndpoints = require("./data");
+const delivererAuth = require("../../middleware/delivererAuth");
 const express = require("express");
 
 const router = express.Router();
+
+// Middleware
+router.use(delivererAuth);
 
 // Routes
 // Auth routes
@@ -13,3 +17,5 @@ router.post("/signup", authEndpoints.signUp);
 router.get("/info", dataEndpoints.info);
 router.put("/info", dataEndpoints.editInfo);
 router.get("/orders", dataEndpoints.orders);
+
+module.exports = router;
