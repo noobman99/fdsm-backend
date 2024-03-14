@@ -6,13 +6,14 @@ const router = express.Router();
 
 // Routes
 // Auth routes
-router.use("/login", authEndpoints.login);
-router.use("/signup", authEndpoints.signUp);
+router.post("/login", authEndpoints.login);
+router.post("/signup", authEndpoints.signUp);
 
 // Data routes
-router.use("/info", dataEndpoints.info);
-router.use("/menu", dataEndpoints.menu);
-router.use("/orders", dataEndpoints.orders);
-router.use("/addFoodItem", dataEndpoints.addFoodItem);
+router.get("/info", dataEndpoints.info);
+router.put("/info", dataEndpoints.editInfo);
+router.get("/menu", dataEndpoints.menu);
+router.get("/orders", dataEndpoints.orders);
+router.post("/addFoodItem", dataEndpoints.addFoodItem);
 
 module.exports = router;

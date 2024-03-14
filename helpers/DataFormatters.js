@@ -1,11 +1,20 @@
+const Customer = require("../models/Customer");
+const Restaurant = require("../models/Restaurant");
+const Deliverer = require("../models/Deliverer");
+
 exports.formatOrder = (order) => {
+  let customer = Customer.findById(order.by);
+  let restaurant = Restaurant.findById(order.from);
+  let deliverer = Deliverer.findById(order.deliveryBy);
+
   return {
-    by: order.by,
-    from: order.from,
-    deliveryBy: order.deliveryBy,
+    customer,
+    restaurant,
+    deliverer,
     items: order.items,
     isPaid: order.isPaid,
     isCompleted: order.isCompleted,
+    orderTime: order._id.getTimestamp(),
   };
 };
 

@@ -6,6 +6,7 @@ const {
   formatCustomer,
 } = require("../../helpers/DataFormatters");
 const Order = require("../../models/Order");
+const mongoose = require("mongoose");
 
 // Routes
 
@@ -16,6 +17,23 @@ exports.info = async (req, res, next) => {
   let resJson = formatCustomer(customer);
 
   res.json(resJson);
+};
+
+exports.editInfo = async (req, res, next) => {
+  // Edit customer info route
+  let customer = req.user;
+
+  customer.name = req.body.name;
+  customer.email = req.body.email;
+  customer.phone = req.body.phone;
+  customer.address = req.body.address;
+
+  await customer.save({
+    validateBeforeSave: true,
+    isNew: false,
+  });
+
+  res.json({ success: true });
 };
 
 exports.orders = async (req, res, next) => {
@@ -30,6 +48,13 @@ exports.orders = async (req, res, next) => {
   }
 
   res.json(resJson);
+};
+
+exports.orderById = async (req, res, next) => {
+  // Order info route
+  let order = await Order.findById(mongoose.Types.ObjectId(req.params.id));
+
+  res.json(formatOrder(order));
 };
 
 exports.favouriteRestaurants = async (req, res, next) => {
@@ -93,5 +118,14 @@ exports.newOrder = async (req, res, next) => {
     isNew: false,
   });
 
-  res.json({ message: "Order placed successfully" });
+  res.json({
+    customer: customer.name,
+    restaurent: restaurant.name,
+    deliverer: deliveryAgent.name,
+    uid: order.id,
+    items: req.body.items,
+    isPaid: req.body.isPaid,
+    isCompleted: false,
+    orderTime: order._id.getTimestamp(),
+  });
 };

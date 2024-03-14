@@ -1,5 +1,5 @@
 const express = require("express");
-const Deliverer = require("../../models/Deliverer");
+const Order = require("../../models/Order");
 const { formatDeliverer } = require("../../helpers/DataFormatters");
 
 const router = express.Router();
@@ -13,6 +13,23 @@ exports.info = async (req, res, next) => {
   let resJson = formatDeliverer(deliverer);
 
   res.json(resJson);
+};
+
+exports.editInfo = async (req, res, next) => {
+  // Edit deliverer info route
+  let deliverer = req.user;
+
+  deliverer.name = req.body.name;
+  deliverer.email = req.body.email;
+  deliverer.phone = req.body.phone;
+  deliverer.address = req.body.address;
+
+  await deliverer.save({
+    validateBeforeSave: true,
+    isNew: false,
+  });
+
+  res.json({ success: true });
 };
 
 exports.orders = async (req, res, next) => {

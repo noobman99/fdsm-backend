@@ -24,6 +24,22 @@ exports.info = async (req, res, next) => {
   res.json(resJson);
 };
 
+exports.editInfo = async (req, res, next) => {
+  // Edit management info route
+  let management = req.user;
+
+  management.name = req.body.name;
+  management.email = req.body.email;
+  management.phone = req.body.phone;
+
+  await management.save({
+    validateBeforeSave: true,
+    isNew: false,
+  });
+
+  res.json({ success: true });
+};
+
 exports.customers = async (req, res, next) => {
   // All customers route
   let customers = await Customer.find({});
@@ -37,7 +53,7 @@ exports.customers = async (req, res, next) => {
   res.json(resJson);
 };
 
-exports.customersById = async (req, res, next) => {
+exports.customerById = async (req, res, next) => {
   // Customer info route
   let customer = await Customer.find({ uid: req.params.id });
 

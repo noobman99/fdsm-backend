@@ -14,6 +14,24 @@ exports.info = async (req, res, next) => {
   res.json(resJson);
 };
 
+exports.editInfo = async (req, res, next) => {
+  // Edit restaurant info route
+  let restaurant = req.user;
+
+  restaurant.name = req.body.name;
+  restaurant.email = req.body.email;
+  restaurant.phone = req.body.phone;
+  restaurant.address = req.body.address;
+  restaurant.timings = req.body.timings;
+
+  await restaurant.save({
+    validateBeforeSave: true,
+    isNew: false,
+  });
+
+  res.json({ success: true });
+};
+
 exports.menu = async (req, res, next) => {
   // Restaurant menu route
   let restaurant = req.user;

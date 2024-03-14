@@ -6,9 +6,10 @@ const router = express.Router();
 
 // Routes
 // Auth routes
-router.use("/login", authEndpoints.logIn);
-router.use("/signup", authEndpoints.signUp);
+router.post("/login", authEndpoints.logIn);
+router.post("/signup", authEndpoints.signUp);
 
 // Data routes
-router.use("/info", dataEndpoints.info);
-router.use("/orders", dataEndpoints.orders);
+router.get("/info", dataEndpoints.info);
+router.put("/info", dataEndpoints.editInfo);
+router.get("/orders", dataEndpoints.orders);
