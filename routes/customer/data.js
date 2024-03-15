@@ -54,6 +54,14 @@ exports.orderById = async (req, res, next) => {
   // Order info route
   let order = await Order.findById(mongoose.Types.ObjectId(req.params.id));
 
+  if (!order) {
+    return res.status(404).json({ error: "Order not found" });
+  }
+
+  if (order.by.toString() !== req.user._id.toString()) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
   res.json(formatOrder(order));
 };
 

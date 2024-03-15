@@ -17,5 +17,9 @@ router.post("/signup", authEndpoints.signUp);
 router.get("/info", dataEndpoints.info);
 router.put("/info", dataEndpoints.editInfo);
 router.get("/orders", dataEndpoints.orders);
+router.get("/order/:id", dataEndpoints.orderById);
+router.put("/order/:id", dataEndpoints.completeOrder);
+router.put("/location", dataEndpoints.updateLocation);
+router.put("/working", dataEndpoints.pauseWorking);
 
 module.exports = router;

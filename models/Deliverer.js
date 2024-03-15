@@ -27,6 +27,10 @@ const delivererSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  location: {
+    type: String,
+    default: "",
+  },
   orders: {
     type: [mongoose.Schema.Types.ObjectId],
     ref: "Order",
