@@ -1,6 +1,7 @@
 const express = require("express");
 const Order = require("../../models/Order");
 const { formatRestaurant } = require("../../helpers/DataFormatters");
+const Dish = require("../../models/Dish");
 const router = express.Router();
 
 // Routes
@@ -57,13 +58,17 @@ exports.addFoodItem = async (req, res, next) => {
   // Add food item route
   let restaurant = req.user;
 
-  let foodItem = {
+  let dish = {
     name: req.body.name,
+    image: req.body.image,
+    restaurant: restaurant._id,
     price: req.body.price,
     tags: req.body.tags,
   };
 
-  restaurant.menu.push(foodItem);
+  dish = await Dish.create(dish);
+
+  restaurant.menu.push(dish._id);
 
   await restaurant.save({
     validateBeforeSave: true,

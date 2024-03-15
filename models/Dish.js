@@ -9,8 +9,16 @@ const dishSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  restaurants: {
-    type: [mongoose.Schema.Types.ObjectId],
+  price: {
+    type: Number,
+    required: true,
+  },
+  isAvailable: {
+    type: Boolean,
+    default: true,
+  },
+  restaurant: {
+    type: mongoose.Schema.Types.ObjectId,
     ref: "Restaurant",
     required: true,
   },

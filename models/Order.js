@@ -27,7 +27,7 @@ const orderSchema = new mongoose.Schema(
       required: true,
     },
     isPaid: {
-      type: int, // 0 - not paid, 1 - paid directly, 2 - paid to deliverer
+      type: Number, // 0 - not paid, 1 - paid directly, 2 - paid to deliverer
       default: 0,
     },
     isCompleted: {
