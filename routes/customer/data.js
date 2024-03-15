@@ -44,7 +44,7 @@ exports.orders = async (req, res, next) => {
   let resJson = [];
 
   for (let order of orders) {
-    resJson.push(formatOrder(order, true));
+    resJson.push(formatOrder(order));
   }
 
   res.json(resJson);
@@ -111,13 +111,20 @@ exports.newOrder = async (req, res, next) => {
 
   let otp = String(Math.floor(1000 + Math.random() * 8999));
 
+  let items = req.body.items.map((item) => {
+    return {
+      dish: mongoose.Types.ObjectId(item.dish),
+      quantity: item.quantity,
+    };
+  });
+
   let order = {
     by: customer._id,
     from: restaurant._id,
     deliveryBy: deliveryAgent._id,
     deliveryAddress: req.body.deliveryAddress,
     otp,
-    items: req.body.items,
+    items,
     isPaid: req.body.isPaid,
     isCompleted: false,
   };
@@ -130,15 +137,5 @@ exports.newOrder = async (req, res, next) => {
     isNew: false,
   });
 
-  res.json({
-    customer: customer.name,
-    restaurent: restaurant.name,
-    deliverer: deliveryAgent.name,
-    uid: order.id,
-    items: req.body.items,
-    isPaid: req.body.isPaid,
-    isCompleted: false,
-    otp: order.otp,
-    orderTime: order._id.getTimestamp(),
-  });
+  res.json(formatOrder(order));
 };

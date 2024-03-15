@@ -1,6 +1,9 @@
 const express = require("express");
 const Order = require("../../models/Order");
-const { formatRestaurant } = require("../../helpers/DataFormatters");
+const {
+  formatRestaurant,
+  formatDish,
+} = require("../../helpers/DataFormatters");
 const Dish = require("../../models/Dish");
 const router = express.Router();
 
@@ -37,7 +40,17 @@ exports.menu = async (req, res, next) => {
   // Restaurant menu route
   let restaurant = req.user;
 
-  res.json(restaurant.menu);
+  let menu = restaurant.menu.map(async (item) => {
+    let dish = await Dish.findById(item);
+
+    return formatDish(dish, {
+      showAvalability: true,
+      showRestaurant: true,
+      showTags: true,
+    });
+  });
+
+  res.json(menu);
 };
 
 exports.orders = async (req, res, next) => {
@@ -58,7 +71,16 @@ exports.addFoodItem = async (req, res, next) => {
   // Add food item route
   let restaurant = req.user;
 
-  let dish = {
+  let dish = await Dish.find({
+    restaurant: restaurant._id,
+    name: req.body.name,
+  });
+
+  if (dish) {
+    res.status(400).json({ error: "Food item already exists." });
+  }
+
+  dish = {
     name: req.body.name,
     image: req.body.image,
     restaurant: restaurant._id,

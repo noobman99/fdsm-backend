@@ -1,11 +1,48 @@
 const Customer = require("../models/Customer");
 const Restaurant = require("../models/Restaurant");
 const Deliverer = require("../models/Deliverer");
+const Dish = require("../models/Dish");
+
+exports.formatDish = (
+  dish,
+  options = { showAvalability: false, showRestaurant: false, showTags: false }
+) => {
+  let res = {
+    name: dish.name,
+    price: dish.price,
+    image: dish.image,
+    id: dish.id,
+  };
+
+  if (options.showAvalability) {
+    res.isAvailable = dish.isAvailable;
+  }
+
+  if (options.showRestaurant) {
+    res.restaurant = dish.restaurant;
+  }
+
+  if (options.showTags) {
+    res.tags = dish.tags;
+  }
+
+  return res;
+};
 
 exports.formatOrder = (order, showOtp = false) => {
   let customer = Customer.findById(order.by);
   let restaurant = Restaurant.findById(order.from);
   let deliverer = Deliverer.findById(order.deliveryBy);
+
+  items = order.items.map(async (item) => {
+    let dish = await Dish.findById(item.dish);
+    dish = this.formatDish(dish);
+
+    return {
+      dish,
+      quantity: item.quantity,
+    };
+  });
 
   let res = {
     customer,
@@ -38,7 +75,16 @@ exports.formatRestaurant = (restaurant, containMenu = false) => {
   };
 
   if (containMenu) {
-    res.menu = restaurant.menu;
+    res.menu = restaurant.menu.map(async (item) => {
+      let dish = await Dish.findById(item);
+      dish = this.formatDish(dish, {
+        showAvalability: true,
+        showRestaurant: true,
+        showTags: true,
+      });
+
+      return dish;
+    });
   }
 
   return res;

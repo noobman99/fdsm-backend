@@ -15,7 +15,18 @@ const orderSchema = new mongoose.Schema(
       required: true,
     },
     items: {
-      type: [{ name: String, quantity: Number, price: Number }],
+      type: [
+        {
+          dish: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Dish",
+          },
+          quantity: {
+            type: Number,
+            min: 1,
+          },
+        },
+      ],
       required: true,
     },
     deliveryAddress: {
