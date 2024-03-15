@@ -22,6 +22,10 @@ const orderSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    otp: {
+      type: String,
+      required: true,
+    },
     isPaid: {
       type: int, // 0 - not paid, 1 - paid directly, 2 - paid to deliverer
       default: 0,

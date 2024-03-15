@@ -2,12 +2,12 @@ const Customer = require("../models/Customer");
 const Restaurant = require("../models/Restaurant");
 const Deliverer = require("../models/Deliverer");
 
-exports.formatOrder = (order) => {
+exports.formatOrder = (order, showOtp = false) => {
   let customer = Customer.findById(order.by);
   let restaurant = Restaurant.findById(order.from);
   let deliverer = Deliverer.findById(order.deliveryBy);
 
-  return {
+  let res = {
     customer,
     restaurant,
     deliverer,
@@ -18,6 +18,12 @@ exports.formatOrder = (order) => {
     isCompleted: order.isCompleted,
     orderTime: order._id.getTimestamp(),
   };
+
+  if (showOtp && !order.isCompleted) {
+    res.otp = order.otp;
+  }
+
+  return res;
 };
 
 exports.formatRestaurant = (restaurant, containMenu = false) => {

@@ -44,7 +44,7 @@ exports.orders = async (req, res, next) => {
   let resJson = [];
 
   for (let order of orders) {
-    resJson.push(formatOrder(order));
+    resJson.push(formatOrder(order, true));
   }
 
   res.json(resJson);
@@ -62,7 +62,7 @@ exports.orderById = async (req, res, next) => {
     return res.status(401).json({ error: "Unauthorized" });
   }
 
-  res.json(formatOrder(order));
+  res.json(formatOrder(order, true));
 };
 
 exports.favouriteRestaurants = async (req, res, next) => {
@@ -109,11 +109,14 @@ exports.newOrder = async (req, res, next) => {
   const restaurant = await Restaurant.findOne({ uid: req.body.restaurant });
   const deliveryAgent = await findDeliveryAgent(restaurant.address);
 
+  let otp = String(Math.floor(1000 + Math.random() * 8999));
+
   let order = {
     by: customer._id,
     from: restaurant._id,
     deliveryBy: deliveryAgent._id,
     deliveryAddress: req.body.deliveryAddress,
+    otp,
     items: req.body.items,
     isPaid: req.body.isPaid,
     isCompleted: false,
@@ -135,6 +138,7 @@ exports.newOrder = async (req, res, next) => {
     items: req.body.items,
     isPaid: req.body.isPaid,
     isCompleted: false,
+    otp: order.otp,
     orderTime: order._id.getTimestamp(),
   });
 };

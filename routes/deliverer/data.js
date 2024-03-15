@@ -98,6 +98,14 @@ exports.finishOrder = async (req, res, next) => {
     return res.status(401).json({ error: "Unauthorized" });
   }
 
+  if (order.isCompleted) {
+    return res.status(400).json({ error: "Order already completed" });
+  }
+
+  if (order.otp !== req.body.otp) {
+    return res.status(400).json({ error: "Invalid OTP" });
+  }
+
   order.isCompleted = true;
   order.isPaid = order.isPaid ? 1 : 2;
 
