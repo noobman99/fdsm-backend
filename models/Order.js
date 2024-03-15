@@ -18,6 +18,10 @@ const orderSchema = new mongoose.Schema(
       type: [{ name: String, quantity: Number, price: Number }],
       required: true,
     },
+    deliveryAddress: {
+      type: String,
+      required: true,
+    },
     isPaid: {
       type: int, // 0 - not paid, 1 - paid directly, 2 - paid to deliverer
       default: 0,

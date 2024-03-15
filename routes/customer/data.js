@@ -113,6 +113,7 @@ exports.newOrder = async (req, res, next) => {
     by: customer._id,
     from: restaurant._id,
     deliveryBy: deliveryAgent._id,
+    deliveryAddress: req.body.deliveryAddress,
     items: req.body.items,
     isPaid: req.body.isPaid,
     isCompleted: false,

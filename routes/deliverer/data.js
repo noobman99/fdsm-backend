@@ -62,6 +62,28 @@ exports.orderById = async (req, res, next) => {
   res.json(formatOrder(order));
 };
 
+exports.currentOrder = async (req, res, next) => {
+  // Deliverer current order route
+  let deliverer = req.user;
+
+  let order = await Order.findOne({
+    deliverer: deliverer._id,
+    isCompleted: false,
+  });
+
+  if (!order) {
+    return res.status(404).json({ error: "No current order" });
+  }
+
+  let resJson = formatOrder(order);
+
+  let rest = await Restaurant.findById(order.from);
+
+  resJson.pickupAddress = rest.address;
+
+  res.json(resJson);
+};
+
 exports.finishOrder = async (req, res, next) => {
   // Deliverer finish order route
   let deliverer = req.user;

@@ -18,6 +18,7 @@ router.get("/info", dataEndpoints.info);
 router.put("/info", dataEndpoints.editInfo);
 router.get("/orders", dataEndpoints.orders);
 router.get("/order/:id", dataEndpoints.orderById);
+router.get("/current", dataEndpoints.currentOrder);
 router.put("/order/:id", dataEndpoints.completeOrder);
 router.put("/location", dataEndpoints.updateLocation);
 router.put("/working", dataEndpoints.pauseWorking);

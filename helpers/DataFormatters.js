@@ -11,8 +11,10 @@ exports.formatOrder = (order) => {
     customer,
     restaurant,
     deliverer,
+    deliveryAddress: order.deliveryAddress,
     items: order.items,
     isPaid: order.isPaid,
+    uid: order.id,
     isCompleted: order.isCompleted,
     orderTime: order._id.getTimestamp(),
   };
