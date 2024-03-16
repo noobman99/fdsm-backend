@@ -2,6 +2,8 @@ const Customer = require("../models/Customer");
 const jwt = require("jsonwebtoken");
 
 const customerAuth = async (req, res, next) => {
+  console.log(req.url);
+
   if (req.url === "/customer/login" || req.url === "/customer/signup") {
     next();
     return;

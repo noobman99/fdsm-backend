@@ -10,7 +10,7 @@ router.use(restaurantAuth);
 
 // Routes
 // Auth routes
-router.post("/login", authEndpoints.login);
+router.post("/login", authEndpoints.logIn);
 router.post("/signup", authEndpoints.signUp);
 
 // Data routes

@@ -1,4 +1,4 @@
-const Management = require("../models/management");
+const Management = require("../models/Management");
 const jwt = require("jsonwebtoken");
 
 const managementAuth = async (req, res, next) => {
