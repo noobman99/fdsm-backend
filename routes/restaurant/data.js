@@ -3,8 +3,10 @@ const Order = require("../../models/Order");
 const {
   formatRestaurant,
   formatDish,
+  formatOrder,
 } = require("../../helpers/DataFormatters");
 const Dish = require("../../models/Dish");
+const { default: mongoose } = require("mongoose");
 const router = express.Router();
 
 // Routes
@@ -67,6 +69,26 @@ exports.orders = async (req, res, next) => {
   res.json(resJson);
 };
 
+exports.orderById = async (req, res, next) => {
+  // Order info route
+  let order;
+  try {
+    order = await Order.findById(mongoose.Types.ObjectId(req.params.id));
+  } catch (error) {
+    return res.status(404).json({ error: "Order not found" });
+  }
+
+  if (!order) {
+    return res.status(404).json({ error: "Order not found" });
+  }
+
+  if (order.from.toString() !== req.user._id.toString()) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
+  res.json(formatOrder(order));
+};
+
 exports.addFoodItem = async (req, res, next) => {
   // Add food item route
   let restaurant = req.user;
@@ -97,6 +119,72 @@ exports.addFoodItem = async (req, res, next) => {
   });
 
   res.json({ message: "Food item added successfully" });
+};
+
+exports.removeFoodItem = async (req, res, next) => {
+  // Remove food item route
+  let restaurant = req.user;
+
+  let dish = await Dish.find({
+    restaurant: restaurant._id,
+    _id: mongoose.Types.ObjectId(req.params.id),
+  });
+
+  if (!dish) {
+    res.status(400).json({ error: "Food item not found." });
+  }
+
+  restaurant.menu = restaurant.menu.filter((item) => item !== dish._id);
+
+  await restaurant.save({
+    validateBeforeSave: true,
+    isNew: false,
+  });
+
+  await Dish.findByIdAndDelete(dish._id);
+
+  res.json({ message: "Food item removed successfully" });
+};
+
+exports.updateFoodItem = async (req, res, next) => {
+  // Update food item route
+  let restaurant = req.user;
+
+  let dish = await Dish.find({
+    restaurant: restaurant._id,
+    _id: mongoose.Types.ObjectId(req.params.id),
+  });
+
+  if (!dish) {
+    res.status(400).json({ error: "Food item not found." });
+  }
+
+  dish.name = req.body.name;
+  dish.image = req.body.image;
+  dish.price = req.body.price;
+  dish.isAvailable = req.body.isAvailable;
+
+  await dish.save({
+    validateBeforeSave: true,
+    isNew: false,
+  });
+
+  res.json({ message: "Food item updated successfully" });
+};
+
+exports.foodItem = async (req, res, next) => {
+  // Food item info route
+  let dish = await Dish.findById(req.params.id);
+
+  if (!dish) {
+    return res.status(404).json({ error: "Food item not found" });
+  }
+
+  if (dish.restaurant.toString() !== req.user._id.toString()) {
+    return res.status(400).json({ error: "Invalid dish" });
+  }
+
+  res.json(formatDish(dish, { showAvalability: true, showRestaurant: true }));
 };
 
 exports.reviews = async (req, res, next) => {
