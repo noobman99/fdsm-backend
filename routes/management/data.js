@@ -57,6 +57,10 @@ exports.customerById = async (req, res, next) => {
   // Customer info route
   let customer = await Customer.find({ uid: req.params.id });
 
+  if (!customer) {
+    return res.status(404).json({ error: "Customer not found" });
+  }
+
   let resJson = formatCustomer(customer);
 
   resJson.favouriteRestaurants = await Restaurant.find({
@@ -69,6 +73,11 @@ exports.customerById = async (req, res, next) => {
 exports.ordersByCustomer = async (req, res, next) => {
   // Customer orders route
   let customer = await Customer.find({ uid: req.params.id });
+
+  if (!customer) {
+    return res.status(404).json({ error: "Customer not found" });
+  }
+
   let orders = await Order.find({ by: customer });
 
   let resJson = [];
@@ -98,6 +107,10 @@ exports.delivererById = async (req, res, next) => {
   // Delivery agent info route
   let deliveryAgent = await Deliverer.find({ uid: req.params.id });
 
+  if (!deliveryAgent) {
+    return res.status(404).json({ error: "Delivery agent not found" });
+  }
+
   let resJson = formatDeliverer(deliveryAgent);
 
   res.json(resJson);
@@ -106,6 +119,11 @@ exports.delivererById = async (req, res, next) => {
 exports.ordersByDeliverer = async (req, res, next) => {
   // Delivery agent orders route
   let deliveryAgent = await Deliverer.find({ uid: req.params.id });
+
+  if (!deliveryAgent) {
+    return res.status(404).json({ error: "Delivery agent not found" });
+  }
+
   let orders = await Order.find({ deliveryBy: deliveryAgent });
 
   let resJson = [];
@@ -134,6 +152,10 @@ exports.restaurantById = async (req, res, next) => {
   // Restaurant info route
   let restaurant = await Restaurant.find({ uid: req.params.id });
 
+  if (!restaurant) {
+    return res.status(404).json({ error: "Restaurant not found" });
+  }
+
   let resJson = formatRestaurant(restaurant, true);
 
   res.json(resJson);
@@ -142,6 +164,11 @@ exports.restaurantById = async (req, res, next) => {
 exports.ordersByRestaurant = async (req, res, next) => {
   // Restaurant orders route
   let restaurant = await Restaurant.find({ uid: req.params.id });
+
+  if (!restaurant) {
+    return res.status(404).json({ error: "Restaurant not found" });
+  }
+
   let orders = await Order.find({ from: restaurant });
 
   let resJson = [];

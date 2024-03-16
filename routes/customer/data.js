@@ -98,6 +98,10 @@ exports.restaurantById = async (req, res, next) => {
   // Restaurant info route
   let restaurant = await Restaurant.find({ uid: req.params.id });
 
+  if (!restaurant) {
+    return res.status(404).json({ error: "Restaurant not found" });
+  }
+
   let resJson = formatRestaurant(restaurant, true);
 
   res.json(resJson);
@@ -107,7 +111,21 @@ exports.newOrder = async (req, res, next) => {
   // New order route
   let customer = req.user;
   const restaurant = await Restaurant.findOne({ uid: req.body.restaurant });
+
+  if (!restaurant) {
+    return res.status(404).json({ error: "Restaurant not found" });
+  }
+
   const deliveryAgent = await findDeliveryAgent(restaurant.address);
+
+  if (!deliveryAgent) {
+    return res
+      .status(404)
+      .json({
+        error:
+          "We are unable to place an order at the moment. Please try again later",
+      });
+  }
 
   let otp = String(Math.floor(1000 + Math.random() * 8999));
 
