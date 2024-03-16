@@ -22,5 +22,7 @@ router.get("/favouriteRestaurants", dataEndpoints.favouriteRestaurants);
 router.get("/restaurants", dataEndpoints.restaurants);
 router.get("/restaurant/:id", dataEndpoints.restaurantById);
 router.post("/newOrder", dataEndpoints.newOrder);
+router.post("/reviews/restaurant/:id", dataEndpoints.reviewRestaurant);
+router.post("/reviews/deliverer/:id", dataEndpoints.reviewDeliverer);
 
 module.exports = router;

@@ -8,6 +8,7 @@ const {
 const Order = require("../../models/Order");
 const mongoose = require("mongoose");
 const Dish = require("../../models/Dish");
+const Deliverer = require("../../models/Deliverer");
 
 // Routes
 
@@ -165,4 +166,58 @@ exports.newOrder = async (req, res, next) => {
   });
 
   res.json(formatOrder(order));
+};
+
+exports.reviewRestaurant = async (req, res, next) => {
+  // Post review route
+  let customer = req.user;
+  let restaurant = await Restaurant.findById(req.params.id);
+
+  if (!restaurant) {
+    return res.status(404).json({ error: "Restaurant not found" });
+  }
+
+  restaurant.rating =
+    (restaurant.rating * restaurant.reviews.length + req.body.rating) /
+    (restaurant.reviews.length + 1);
+
+  restaurant.reviews.push({
+    by: customer._id,
+    rating: req.body.rating,
+    review: req.body.review,
+  });
+
+  await restaurant.save({
+    validateBeforeSave: true,
+    isNew: false,
+  });
+
+  res.json({ success: true });
+};
+
+exports.reviewDeliverer = async (req, res, next) => {
+  // Post review route
+  let customer = req.user;
+  let deliverer = await Deliverer.findById(req.params.id);
+
+  if (!deliverer) {
+    return res.status(404).json({ error: "Deliverer not found" });
+  }
+
+  deliverer.rating =
+    (deliverer.rating * deliverer.reviews.length + req.body.rating) /
+    (deliverer.reviews.length + 1);
+
+  deliverer.reviews.push({
+    by: customer._id,
+    rating: req.body.rating,
+    review: req.body.review,
+  });
+
+  await deliverer.save({
+    validateBeforeSave: true,
+    isNew: false,
+  });
+
+  res.json({ success: true });
 };
