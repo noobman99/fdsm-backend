@@ -83,6 +83,29 @@ exports.favouriteRestaurants = async (req, res, next) => {
   res.json(resJson);
 };
 
+exports.newFavouriteRestaurant = async (req, res, next) => {
+  // Add favourite restaurant route
+  let customer = req.user;
+  let restaurant = await Restaurant.findById(req.params.id);
+
+  if (!restaurant) {
+    return res.status(404).json({ error: "Restaurant not found" });
+  }
+
+  if (customer.favouriteRestaurants.includes(restaurant._id)) {
+    return res.status(400).json({ error: "Restaurant already in favourites" });
+  }
+
+  customer.favouriteRestaurants.push(restaurant._id);
+
+  await customer.save({
+    validateBeforeSave: true,
+    isNew: false,
+  });
+
+  res.json({ success: true });
+};
+
 exports.restaurants = async (req, res, next) => {
   // All restaurants route
   let restaurants = await Restaurant.find({});
