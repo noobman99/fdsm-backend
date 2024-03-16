@@ -22,7 +22,7 @@ const RandomString = (length) => {
 };
 
 exports.signUp = async (req, res, next) => {
-  const { name, email, phone, password, address, timings } = req.body;
+  const { name, email, phone, password, address, timings, tags } = req.body;
 
   if (!username || !email || !password) {
     res.status(400).json({ success: false, error: "Fill all details." });
@@ -60,6 +60,7 @@ exports.signUp = async (req, res, next) => {
       password: hashedPassword,
       address,
       timings,
+      tags,
     });
 
     const token = createToken(restaurant._id);

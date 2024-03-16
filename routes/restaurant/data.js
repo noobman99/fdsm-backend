@@ -27,6 +27,7 @@ exports.editInfo = async (req, res, next) => {
   restaurant.phone = req.body.phone;
   restaurant.address = req.body.address;
   restaurant.timings = req.body.timings;
+  restaurant.tags = req.body.tags;
 
   await restaurant.save({
     validateBeforeSave: true,

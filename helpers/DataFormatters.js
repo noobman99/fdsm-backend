@@ -68,6 +68,7 @@ exports.formatRestaurant = (restaurant, containMenu = false) => {
     address: restaurant.address,
     timings: restaurant.timings,
     rating: restaurant.rating,
+    tags: restaurant.tags,
   };
 
   if (containMenu) {
