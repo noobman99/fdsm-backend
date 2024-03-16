@@ -31,6 +31,18 @@ const delivererSchema = new mongoose.Schema({
     type: String,
     default: "",
   },
+  reviews: {
+    poster: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "Customer",
+    },
+    review: {
+      type: String,
+    },
+    rating: {
+      type: Number,
+    },
+  },
   orders: {
     type: [mongoose.Schema.Types.ObjectId],
     ref: "Order",

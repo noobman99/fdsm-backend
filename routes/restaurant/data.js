@@ -98,3 +98,24 @@ exports.addFoodItem = async (req, res, next) => {
 
   res.json({ message: "Food item added successfully" });
 };
+
+exports.reviews = async (req, res, next) => {
+  // Restaurant reviews route
+  let restaurant = req.user;
+
+  let resJson = [];
+
+  let poster;
+
+  for (let review of restaurant.reviews) {
+    poster = await Customer.findById(review.poster, "name");
+
+    resJson.push({
+      poster: poster.name,
+      rating: review.rating,
+      review: review.review,
+    });
+  }
+
+  res.json(resJson);
+};

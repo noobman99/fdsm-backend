@@ -148,3 +148,24 @@ exports.pauseWorking = async (req, res, next) => {
 
   res.json({ success: true });
 };
+
+exports.reviews = async (req, res, next) => {
+  // Deliverer reviews route
+  let deliverer = req.user;
+
+  let resJson = [];
+
+  let poster;
+
+  for (let review of deliverer.reviews) {
+    poster = await Customer.findById(review.poster, "name");
+
+    resJson.push({
+      poster: poster.name,
+      text: review.text,
+      rating: review.rating,
+    });
+  }
+
+  res.json(resJson);
+};

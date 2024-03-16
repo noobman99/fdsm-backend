@@ -39,6 +39,18 @@ const restaurantSchema = new mongoose.Schema({
     type: [String],
     default: [],
   },
+  reviews: {
+    poster: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "Customer",
+    },
+    review: {
+      type: String,
+    },
+    rating: {
+      type: Number,
+    },
+  },
   menu: {
     type: [mongoose.Schema.Types.ObjectId],
     ref: "Dish",

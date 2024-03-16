@@ -205,7 +205,7 @@ exports.reviewRestaurant = async (req, res, next) => {
     (restaurant.reviews.length + 1);
 
   restaurant.reviews.push({
-    by: customer._id,
+    poster: customer._id,
     rating: req.body.rating,
     review: req.body.review,
   });
@@ -232,7 +232,7 @@ exports.reviewDeliverer = async (req, res, next) => {
     (deliverer.reviews.length + 1);
 
   deliverer.reviews.push({
-    by: customer._id,
+    poster: customer._id,
     rating: req.body.rating,
     review: req.body.review,
   });

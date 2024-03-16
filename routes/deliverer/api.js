@@ -22,5 +22,6 @@ router.get("/current", dataEndpoints.currentOrder);
 router.put("/order/:id", dataEndpoints.completeOrder);
 router.put("/location", dataEndpoints.updateLocation);
 router.put("/working", dataEndpoints.pauseWorking);
+router.get("/reviews", dataEndpoints.reviews);
 
 module.exports = router;

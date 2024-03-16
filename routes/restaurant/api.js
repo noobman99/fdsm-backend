@@ -19,5 +19,6 @@ router.put("/info", dataEndpoints.editInfo);
 router.get("/menu", dataEndpoints.menu);
 router.get("/orders", dataEndpoints.orders);
 router.post("/addFoodItem", dataEndpoints.addFoodItem);
+router.post("/reviews", dataEndpoints.reviews);
 
 module.exports = router;
