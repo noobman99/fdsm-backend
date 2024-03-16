@@ -7,6 +7,7 @@ const {
 } = require("../../helpers/DataFormatters");
 const Order = require("../../models/Order");
 const mongoose = require("mongoose");
+const Dish = require("../../models/Dish");
 
 // Routes
 
@@ -119,19 +120,27 @@ exports.newOrder = async (req, res, next) => {
   const deliveryAgent = await findDeliveryAgent(restaurant.address);
 
   if (!deliveryAgent) {
-    return res
-      .status(404)
-      .json({
-        error:
-          "We are unable to place an order at the moment. Please try again later",
-      });
+    return res.status(404).json({
+      error:
+        "We are unable to place an order at the moment. Please try again later",
+    });
   }
 
   let otp = String(Math.floor(1000 + Math.random() * 8999));
 
-  let items = req.body.items.map((item) => {
+  let items = await req.body.items.map(async (item) => {
+    let dish = await Dish.findById(mongoose.Types.ObjectId(item.dish));
+
+    if (!dish) {
+      return res.status(404).json({ error: "Dish not found" });
+    }
+
+    if (dish.restaurant.toString() !== restaurant._id.toString()) {
+      return res.status(400).json({ error: "Invalid dish" });
+    }
+
     return {
-      dish: mongoose.Types.ObjectId(item.dish),
+      dish: dish._id,
       quantity: item.quantity,
     };
   });
