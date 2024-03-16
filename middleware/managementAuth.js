@@ -2,7 +2,7 @@ const Management = require("../models/Management");
 const jwt = require("jsonwebtoken");
 
 const managementAuth = async (req, res, next) => {
-  if (req.url === "/management/login" || req.url === "/management/signup") {
+  if (req.url === "/login" || req.url === "/signup") {
     next();
     return;
   }
@@ -14,6 +14,8 @@ const managementAuth = async (req, res, next) => {
       success: false,
       error: "Please login to access this.",
     });
+
+    return;
   }
 
   authToken = authToken.split(" ")[1];
@@ -28,6 +30,8 @@ const managementAuth = async (req, res, next) => {
         success: false,
         error: "Please login to access this.",
       });
+
+      return;
     }
 
     req.user = management;
@@ -50,6 +54,8 @@ const managementAuth = async (req, res, next) => {
         error: "Server could not process your request at this time.",
       });
     }
+
+    return;
   }
 };
 

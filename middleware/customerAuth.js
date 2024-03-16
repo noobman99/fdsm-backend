@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 const customerAuth = async (req, res, next) => {
   console.log(req.url);
 
-  if (req.url === "/customer/login" || req.url === "/customer/signup") {
+  if (req.url === "/login" || req.url === "/signup") {
     next();
     return;
   }
@@ -16,6 +16,8 @@ const customerAuth = async (req, res, next) => {
       success: false,
       error: "Please login to access this.",
     });
+
+    return;
   }
 
   authToken = authToken.split(" ")[1];
@@ -30,6 +32,8 @@ const customerAuth = async (req, res, next) => {
         success: false,
         error: "Please login to access this.",
       });
+
+      return;
     }
 
     req.user = customer;
@@ -52,6 +56,8 @@ const customerAuth = async (req, res, next) => {
         error: "Server could not process your request at this time.",
       });
     }
+
+    return;
   }
 };
 
