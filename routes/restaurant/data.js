@@ -46,7 +46,6 @@ exports.menu = async (req, res, next) => {
     return formatDish(dish, {
       showAvalability: true,
       showRestaurant: true,
-      showTags: true,
     });
   });
 
@@ -85,7 +84,6 @@ exports.addFoodItem = async (req, res, next) => {
     image: req.body.image,
     restaurant: restaurant._id,
     price: req.body.price,
-    tags: req.body.tags,
   };
 
   dish = await Dish.create(dish);

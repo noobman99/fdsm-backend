@@ -5,7 +5,7 @@ const Dish = require("../models/Dish");
 
 exports.formatDish = (
   dish,
-  options = { showAvalability: false, showRestaurant: false, showTags: false }
+  options = { showAvalability: false, showRestaurant: false }
 ) => {
   let res = {
     name: dish.name,
@@ -20,10 +20,6 @@ exports.formatDish = (
 
   if (options.showRestaurant) {
     res.restaurant = dish.restaurant;
-  }
-
-  if (options.showTags) {
-    res.tags = dish.tags;
   }
 
   return res;
@@ -80,7 +76,6 @@ exports.formatRestaurant = (restaurant, containMenu = false) => {
       dish = this.formatDish(dish, {
         showAvalability: true,
         showRestaurant: true,
-        showTags: true,
       });
 
       return dish;

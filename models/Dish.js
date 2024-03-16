@@ -22,10 +22,6 @@ const dishSchema = new mongoose.Schema({
     ref: "Restaurant",
     required: true,
   },
-  tags: {
-    type: [String],
-    required: true,
-  },
 });
 
 const Dish = mongoose.model("Dish", dishSchema);
