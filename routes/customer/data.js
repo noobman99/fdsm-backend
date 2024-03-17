@@ -70,7 +70,11 @@ exports.orders = async (req, res, next) => {
 
 exports.orderById = async (req, res, next) => {
   // Order info route
-  let order = await Order.findById(mongoose.Types.ObjectId(req.params.id));
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    return res.status(400).json({ error: "Invalid order id" });
+  }
+
+  let order = await Order.findById(req.params.id);
 
   if (!order) {
     return res.status(404).json({ error: "Order not found" });
@@ -223,6 +227,11 @@ exports.newOrder = async (req, res, next) => {
 exports.reviewRestaurant = async (req, res, next) => {
   // Post review route
   let customer = req.user;
+
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    return res.status(400).json({ error: "Invalid restaurant id" });
+  }
+
   let restaurant = await Restaurant.findById(req.params.id);
 
   if (!restaurant) {
@@ -250,6 +259,11 @@ exports.reviewRestaurant = async (req, res, next) => {
 exports.reviewDeliverer = async (req, res, next) => {
   // Post review route
   let customer = req.user;
+
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    return res.status(400).json({ error: "Invalid deliverer id" });
+  }
+
   let deliverer = await Deliverer.findById(req.params.id);
 
   if (!deliverer) {

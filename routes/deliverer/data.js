@@ -4,6 +4,7 @@ const {
   formatOrder,
   formatDeliverer,
 } = require("../../helpers/DataFormatters");
+const { default: mongoose } = require("mongoose");
 
 const router = express.Router();
 
@@ -68,6 +69,10 @@ exports.orders = async (req, res, next) => {
 
 exports.orderById = async (req, res, next) => {
   // Order info route
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    return res.status(400).json({ error: "Invalid order id" });
+  }
+
   let order = await Order.findById(req.params.id);
 
   if (!order) {
@@ -106,6 +111,10 @@ exports.currentOrder = async (req, res, next) => {
 exports.finishOrder = async (req, res, next) => {
   // Deliverer finish order route
   let deliverer = req.user;
+
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    return res.status(400).json({ error: "Invalid order id" });
+  }
 
   let order = await Order.findById(req.params.id);
 
