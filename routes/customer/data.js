@@ -102,7 +102,7 @@ exports.favouriteRestaurants = async (req, res, next) => {
 exports.newFavouriteRestaurant = async (req, res, next) => {
   // Add favourite restaurant route
   let customer = req.user;
-  let restaurant = await Restaurant.findById(req.params.id);
+  let restaurant = await Restaurant.findOne({ uid: req.params.id }, "_id");
 
   if (!restaurant) {
     return res.status(404).json({ error: "Restaurant not found" });
@@ -137,7 +137,7 @@ exports.restaurants = async (req, res, next) => {
 
 exports.restaurantById = async (req, res, next) => {
   // Restaurant info route
-  let restaurant = await Restaurant.find({ uid: req.params.id });
+  let restaurant = await Restaurant.findOne({ uid: req.params.id });
 
   if (!restaurant) {
     return res.status(404).json({ error: "Restaurant not found" });

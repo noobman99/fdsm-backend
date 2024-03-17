@@ -72,15 +72,17 @@ exports.formatRestaurant = (restaurant, containMenu = false) => {
   };
 
   if (containMenu) {
-    res.menu = restaurant.menu.map(async (item) => {
-      let dish = await Dish.findById(item);
-      dish = this.formatDish(dish, {
-        showAvalability: true,
-        showRestaurant: true,
-      });
+    res.menu = restaurant.menu
+      ? restaurant.menu.map(async (item) => {
+          let dish = await Dish.findById(item);
+          dish = this.formatDish(dish, {
+            showAvalability: true,
+            showRestaurant: true,
+          });
 
-      return dish;
-    });
+          return dish;
+        })
+      : [];
   }
 
   return res;
