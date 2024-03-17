@@ -1,6 +1,9 @@
 const express = require("express");
 const Order = require("../../models/Order");
-const { formatDeliverer } = require("../../helpers/DataFormatters");
+const {
+  formatDeliverer,
+  formatOrder,
+} = require("../../helpers/DataFormatters");
 
 const router = express.Router();
 
@@ -57,7 +60,7 @@ exports.orders = async (req, res, next) => {
   let resJson = [];
 
   for (let order of orders) {
-    resJson.push(formatOrder(order));
+    resJson.push(await formatOrder(order));
   }
 
   res.json(orders);
@@ -75,7 +78,7 @@ exports.orderById = async (req, res, next) => {
     return res.status(401).json({ error: "Unauthorized" });
   }
 
-  res.json(formatOrder(order));
+  res.json(await formatOrder(order));
 };
 
 exports.currentOrder = async (req, res, next) => {
@@ -91,7 +94,7 @@ exports.currentOrder = async (req, res, next) => {
     return res.status(404).json({ error: "No current order" });
   }
 
-  let resJson = formatOrder(order);
+  let resJson = await formatOrder(order);
 
   let rest = await Restaurant.findById(order.from);
 

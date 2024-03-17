@@ -62,7 +62,7 @@ exports.orders = async (req, res, next) => {
   let resJson = [];
 
   for (let order of orders) {
-    resJson.push(formatOrder(order));
+    resJson.push(await formatOrder(order));
   }
 
   res.json(resJson);
@@ -80,7 +80,7 @@ exports.orderById = async (req, res, next) => {
     return res.status(401).json({ error: "Unauthorized" });
   }
 
-  res.json(formatOrder(order, true));
+  res.json(await formatOrder(order, true));
 };
 
 exports.favouriteRestaurants = async (req, res, next) => {
@@ -93,7 +93,7 @@ exports.favouriteRestaurants = async (req, res, next) => {
   let resJson = [];
 
   for (let restaurant of restaurants) {
-    resJson.push(formatRestaurant(restaurant));
+    resJson.push(await formatRestaurant(restaurant));
   }
 
   res.json(resJson);
@@ -129,7 +129,7 @@ exports.restaurants = async (req, res, next) => {
   let resJson = [];
 
   for (let restaurant of restaurants) {
-    resJson.push(formatRestaurant(restaurant));
+    resJson.push(await formatRestaurant(restaurant));
   }
 
   res.json(resJson);
@@ -143,7 +143,7 @@ exports.restaurantById = async (req, res, next) => {
     return res.status(404).json({ error: "Restaurant not found" });
   }
 
-  let resJson = formatRestaurant(restaurant, true);
+  let resJson = await formatRestaurant(restaurant, true);
 
   res.json(resJson);
 };
@@ -204,7 +204,7 @@ exports.newOrder = async (req, res, next) => {
     isNew: false,
   });
 
-  res.json(formatOrder(order));
+  res.json(await formatOrder(order));
 };
 
 exports.reviewRestaurant = async (req, res, next) => {

@@ -15,7 +15,7 @@ exports.info = async (req, res, next) => {
   // Customer info route
   let restaurant = req.user;
 
-  let resJson = formatRestaurant(restaurant, true);
+  let resJson = await formatRestaurant(restaurant, true);
 
   res.json(resJson);
 };
@@ -63,14 +63,18 @@ exports.menu = async (req, res, next) => {
   // Restaurant menu route
   let restaurant = req.user;
 
-  let menu = restaurant.menu.map(async (item) => {
+  let menu = [];
+
+  for (let item of restaurant.menu) {
     let dish = await Dish.findById(item);
 
-    return formatDish(dish, {
+    dish = await formatDish(dish, {
       showAvalability: true,
       showRestaurant: true,
     });
-  });
+
+    menu.push(dish);
+  }
 
   res.json(menu);
 };
@@ -83,7 +87,7 @@ exports.orders = async (req, res, next) => {
   let resJson = [];
 
   for (let order of orders) {
-    resJson.push(formatOrder(order));
+    resJson.push(await formatOrder(order));
   }
 
   res.json(resJson);
@@ -106,20 +110,24 @@ exports.orderById = async (req, res, next) => {
     return res.status(401).json({ error: "Unauthorized" });
   }
 
-  res.json(formatOrder(order));
+  res.json(await formatOrder(order));
 };
 
 exports.addFoodItem = async (req, res, next) => {
   // Add food item route
   let restaurant = req.user;
 
-  let dish = await Dish.find({
+  if (!req.body.name || !req.body.image || !req.body.price) {
+    return res.status(400).json({ error: "Invalid Values" });
+  }
+
+  let dish = await Dish.findOne({
     restaurant: restaurant._id,
     name: req.body.name,
   });
 
   if (dish) {
-    res.status(400).json({ error: "Food item already exists." });
+    return res.status(400).json({ error: "Food item already exists." });
   }
 
   dish = {
@@ -204,7 +212,9 @@ exports.foodItem = async (req, res, next) => {
     return res.status(400).json({ error: "Invalid dish" });
   }
 
-  res.json(formatDish(dish, { showAvalability: true, showRestaurant: true }));
+  res.json(
+    await formatDish(dish, { showAvalability: true, showRestaurant: true })
+  );
 };
 
 exports.reviews = async (req, res, next) => {

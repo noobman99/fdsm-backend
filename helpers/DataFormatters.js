@@ -3,7 +3,7 @@ const Restaurant = require("../models/Restaurant");
 const Deliverer = require("../models/Deliverer");
 const Dish = require("../models/Dish");
 
-exports.formatDish = (
+exports.formatDish = async (
   dish,
   options = { showAvalability: false, showRestaurant: false }
 ) => {
@@ -19,33 +19,35 @@ exports.formatDish = (
   }
 
   if (options.showRestaurant) {
-    res.restaurant = dish.restaurant;
+    res.restaurant = (await Restaurant.findById(dish.restaurant, "name")).name;
   }
 
   return res;
 };
 
-exports.formatOrder = (order, showOtp = false) => {
-  let customer = Customer.findById(order.by);
-  let restaurant = Restaurant.findById(order.from);
-  let deliverer = Deliverer.findById(order.deliveryBy);
+exports.formatOrder = async (order, showOtp = false) => {
+  let customer = await Customer.findById(order.by);
+  let restaurant = await Restaurant.findById(order.from);
+  let deliverer = await Deliverer.findById(order.deliveryBy);
 
-  items = order.items.map(async (item) => {
+  let items = [];
+
+  for (let item of order.items) {
     let dish = await Dish.findById(item.dish);
-    dish = this.formatDish(dish);
+    dish = await this.formatDish(dish);
 
-    return {
+    items.push({
       dish,
       quantity: item.quantity,
-    };
-  });
+    });
+  }
 
   let res = {
     customer,
     restaurant,
     deliverer,
     deliveryAddress: order.deliveryAddress,
-    items: order.items,
+    items,
     isPaid: order.isPaid,
     uid: order.id,
     isCompleted: order.isCompleted,
@@ -59,7 +61,7 @@ exports.formatOrder = (order, showOtp = false) => {
   return res;
 };
 
-exports.formatRestaurant = (restaurant, containMenu = false) => {
+exports.formatRestaurant = async (restaurant, containMenu = false) => {
   let res = {
     name: restaurant.name,
     email: restaurant.email,
@@ -72,17 +74,13 @@ exports.formatRestaurant = (restaurant, containMenu = false) => {
   };
 
   if (containMenu) {
-    res.menu = restaurant.menu
-      ? restaurant.menu.map(async (item) => {
-          let dish = await Dish.findById(item);
-          dish = this.formatDish(dish, {
-            showAvalability: true,
-            showRestaurant: true,
-          });
+    res.menu = [];
 
-          return dish;
-        })
-      : [];
+    for (let item of restaurant.menu) {
+      let dish = await Dish.findById(item);
+      dish = await this.formatDish(dish, { showAvalability: true });
+      res.menu.push(dish);
+    }
   }
 
   return res;
