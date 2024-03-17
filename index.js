@@ -14,8 +14,11 @@ dotenv.config();
 const app = express();
 const port = 3000;
 
-// Define a sample route
+// Middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
+// Routes
 app.use("/api/customer", customerApi);
 app.use("/api/restaurant", restaurantApi);
 app.use("/api/deliverer", delivererApi);

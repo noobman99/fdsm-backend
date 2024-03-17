@@ -95,7 +95,7 @@ exports.formatCustomer = (customer, containFavouriteRestaurants = false) => {
     address: customer.address,
   };
 
-  if (containFavourites) {
+  if (containFavouriteRestaurants) {
     res.favouriteRestaurants = customer.favouriteRestaurants;
   }
 

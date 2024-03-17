@@ -22,24 +22,41 @@ const RandomString = (length) => {
 };
 
 exports.signUp = async (req, res, next) => {
-  const { name, email, phone, password } = req.body;
+  let name, email, phone, password;
 
-  if (!username || !email || !password) {
+  try {
+    console.log(req.body);
+    ({ name, email, phone, password } = req.body);
+  } catch (error) {
+    res.status(500).json({ success: false, error: "Invalid Request" });
+
+    return;
+  }
+
+  if (!name || !email || !password) {
     res.status(400).json({ success: false, error: "Fill all details." });
+
+    return;
   }
 
   if (!validator.isEmail(email)) {
     res.status(400).json({ success: false, error: "Invalid email" });
+
+    return;
   }
 
   if (!validator.isMobilePhone(phone)) {
     res.status(400).json({ success: false, error: "Invalid phone number" });
+
+    return;
   }
 
   let customer = await Customer.findOne({ email });
 
   if (customer) {
     res.status(400).json({ success: false, error: "Email already exists" });
+
+    return;
   }
 
   const salt = await bcrypt.genSalt(10);
@@ -67,15 +84,26 @@ exports.signUp = async (req, res, next) => {
     if (customer) {
       await Customer.findByIdAndDelete(customer._id);
     }
-    res.status(500).json({ success: false, error: error.message });
+    console.log(error);
+    res.status(500).json({ success: false, error: "Server Error" });
   }
 };
 
 exports.logIn = async (req, res, next) => {
-  const { email, password } = req.body;
+  let email, password;
+
+  try {
+    ({ email, password } = req.body);
+  } catch (error) {
+    res.status(500).json({ success: false, error: "Invalid Request" });
+
+    return;
+  }
 
   if (!email || !password) {
     res.status(400).json({ success: false, error: "Fill all details." });
+
+    return;
   }
 
   const customer = await Customer.findOne({ email });
@@ -94,10 +122,18 @@ exports.logIn = async (req, res, next) => {
 };
 
 exports.changePassword = async (req, res, next) => {
-  const { oldPassword, newPassword } = req.body;
+  try {
+    const { oldPassword, newPassword } = req.body;
+  } catch (error) {
+    res.status(500).json({ success: false, error: "Invalid Request" });
+
+    return;
+  }
 
   if (!oldPassword || !newPassword) {
     res.status(400).json({ success: false, error: "Fill all details." });
+
+    return;
   }
 
   const customer = req.user;
