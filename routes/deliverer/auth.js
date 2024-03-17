@@ -22,24 +22,34 @@ const RandomString = (length) => {
 };
 
 exports.signUp = async (req, res, next) => {
-  const { name, email, phone, password } = req.body;
+  let name, email, phone, password;
 
-  if (!username || !email || !password) {
-    res.status(400).json({ success: false, error: "Fill all details." });
+  try {
+    ({ name, email, phone, password } = req.body);
+  } catch (error) {
+    return res.status(500).json({ success: false, error: "Invalid Request" });
+  }
+
+  if (!name || !email || !password) {
+    return res.status(400).json({ success: false, error: "Fill all details." });
   }
 
   if (!validator.isEmail(email)) {
-    res.status(400).json({ success: false, error: "Invalid email" });
+    return res.status(400).json({ success: false, error: "Invalid email" });
   }
 
   if (!validator.isMobilePhone(phone)) {
-    res.status(400).json({ success: false, error: "Invalid phone number" });
+    return res
+      .status(400)
+      .json({ success: false, error: "Invalid phone number" });
   }
 
   let deliverer = await Deliverer.findOne({ email });
 
   if (deliverer) {
-    res.status(400).json({ success: false, error: "Email already exists" });
+    return res
+      .status(400)
+      .json({ success: false, error: "Email already exists" });
   }
 
   const salt = await bcrypt.genSalt(10);
@@ -67,15 +77,22 @@ exports.signUp = async (req, res, next) => {
     if (deliverer) {
       await Deliverer.findByIdAndDelete(deliverer._id);
     }
-    res.status(500).json({ success: false, error: error.message });
+    console.log(error);
+    res.status(500).json({ success: false, error: "Server Error" });
   }
 };
 
 exports.logIn = async (req, res, next) => {
-  const { email, password } = req.body;
+  let email, password;
+
+  try {
+    ({ email, password } = req.body);
+  } catch (error) {
+    return res.status(500).json({ success: false, error: "Invalid Request" });
+  }
 
   if (!email || !password) {
-    res.status(400).json({ success: false, error: "Fill all details." });
+    return res.status(400).json({ success: false, error: "Fill all details." });
   }
 
   const deliverer = await Deliverer.findOne({ email });
@@ -94,10 +111,16 @@ exports.logIn = async (req, res, next) => {
 };
 
 exports.changePassword = async (req, res, next) => {
-  const { oldPassword, newPassword } = req.body;
+  let oldPassword, newPassword;
+
+  try {
+    ({ oldPassword, newPassword } = req.body);
+  } catch (error) {
+    return res.status(500).json({ success: false, error: "Invalid Request" });
+  }
 
   if (!oldPassword || !newPassword) {
-    res.status(400).json({ success: false, error: "Fill all details." });
+    return res.status(400).json({ success: false, error: "Fill all details." });
   }
 
   const deliverer = req.user;

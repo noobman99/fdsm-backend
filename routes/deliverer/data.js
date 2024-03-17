@@ -19,17 +19,33 @@ exports.editInfo = async (req, res, next) => {
   // Edit deliverer info route
   let deliverer = req.user;
 
-  deliverer.name = req.body.name;
-  deliverer.email = req.body.email;
-  deliverer.phone = req.body.phone;
-  deliverer.address = req.body.address;
+  if (req.body.name) {
+    deliverer.name = req.body.name;
+  }
+  if (req.body.email) {
+    deliverer.email = req.body.email;
+  }
+  if (req.body.phone) {
+    deliverer.phone = req.body.phone;
+  }
+  if (req.body.address) {
+    deliverer.address = req.body.address;
+  }
 
-  await deliverer.save({
-    validateBeforeSave: true,
-    isNew: false,
-  });
+  try {
+    await deliverer.save({
+      validateBeforeSave: true,
+      isNew: false,
+    });
 
-  res.json({ success: true });
+    res.json({ success: true });
+  } catch (error) {
+    if (error.name === "ValidationError") {
+      return res.status(400).json({ error: "Invalid Values" });
+    } else {
+      return res.status(500).json({ error: "Server Error" });
+    }
+  }
 };
 
 exports.orders = async (req, res, next) => {
