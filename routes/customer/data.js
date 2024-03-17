@@ -151,6 +151,17 @@ exports.restaurantById = async (req, res, next) => {
 exports.newOrder = async (req, res, next) => {
   // New order route
   let customer = req.user;
+
+  if (!req.body.restaurant) {
+    return res.status(400).json({ error: "Invalid restaurant" });
+  }
+  if (!req.body.items) {
+    return res.status(400).json({ error: "Invalid items" });
+  }
+  if (!req.body.deliveryAddress) {
+    return res.status(400).json({ error: "Invalid delivery address" });
+  }
+
   const restaurant = await Restaurant.findOne({ uid: req.body.restaurant });
 
   if (!restaurant) {
@@ -168,8 +179,10 @@ exports.newOrder = async (req, res, next) => {
 
   let otp = String(Math.floor(1000 + Math.random() * 8999));
 
-  let items = await req.body.items.map(async (item) => {
-    let dish = await Dish.findById(mongoose.Types.ObjectId(item.dish));
+  let items = [];
+
+  for (let item of req.body.items) {
+    let dish = await Dish.findById(item.dish);
 
     if (!dish) {
       return res.status(404).json({ error: "Dish not found" });
@@ -179,11 +192,11 @@ exports.newOrder = async (req, res, next) => {
       return res.status(400).json({ error: "Invalid dish" });
     }
 
-    return {
+    items.push({
       dish: dish._id,
       quantity: item.quantity,
-    };
-  });
+    });
+  }
 
   let order = {
     by: customer._id,
@@ -196,7 +209,7 @@ exports.newOrder = async (req, res, next) => {
     isCompleted: false,
   };
 
-  order = Order.create(order);
+  order = await Order.create(order);
 
   customer.orders.push(order._id);
   await customer.save({
