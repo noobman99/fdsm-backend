@@ -11,7 +11,7 @@ exports.formatDish = async (
     name: dish.name,
     price: dish.price,
     image: dish.image,
-    id: dish.id,
+    uid: dish.id,
   };
 
   if (options.showAvalability) {
@@ -43,9 +43,9 @@ exports.formatOrder = async (order, showOtp = false) => {
   }
 
   let res = {
-    customer,
-    restaurant,
-    deliverer,
+    customer: this.formatCustomer(customer),
+    restaurant: await this.formatRestaurant(restaurant),
+    deliverer: this.formatDeliverer(deliverer),
     deliveryAddress: order.deliveryAddress,
     items,
     isPaid: order.isPaid,
