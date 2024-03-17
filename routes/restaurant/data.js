@@ -24,19 +24,39 @@ exports.editInfo = async (req, res, next) => {
   // Edit restaurant info route
   let restaurant = req.user;
 
-  restaurant.name = req.body.name;
-  restaurant.email = req.body.email;
-  restaurant.phone = req.body.phone;
-  restaurant.address = req.body.address;
-  restaurant.timings = req.body.timings;
-  restaurant.tags = req.body.tags;
+  if (req.body.name) {
+    restaurant.name = req.body.name;
+  }
+  if (req.body.email) {
+    restaurant.email = req.body.email;
+  }
+  if (req.body.phone) {
+    restaurant.phone = req.body.phone;
+  }
+  if (req.body.address) {
+    restaurant.address = req.body.address;
+  }
+  if (req.body.timings) {
+    restaurant.timings = req.body.timings;
+  }
+  if (req.body.tags) {
+    restaurant.tags = req.body.tags;
+  }
 
-  await restaurant.save({
-    validateBeforeSave: true,
-    isNew: false,
-  });
+  try {
+    await restaurant.save({
+      validateBeforeSave: true,
+      isNew: false,
+    });
 
-  res.json({ success: true });
+    res.json({ success: true });
+  } catch (error) {
+    if (error.name === "ValidationError") {
+      return res.status(400).json({ error: "Invalid Values" });
+    } else {
+      return res.status(500).json({ error: "Server Error" });
+    }
+  }
 };
 
 exports.menu = async (req, res, next) => {

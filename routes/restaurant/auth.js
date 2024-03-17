@@ -22,9 +22,15 @@ const RandomString = (length) => {
 };
 
 exports.signUp = async (req, res, next) => {
-  const { name, email, phone, password, address, timings, tags } = req.body;
+  let name, email, phone, password, address, timings, tags;
 
-  if (!username || !email || !password) {
+  try {
+    ({ name, email, phone, password, address, timings, tags } = req.body);
+  } catch (error) {
+    res.status(500).json({ success: false, error: "Invalid Request" });
+  }
+
+  if (!name || !email || !password) {
     res.status(400).json({ success: false, error: "Fill all details." });
   }
 
@@ -70,20 +76,28 @@ exports.signUp = async (req, res, next) => {
     if (restaurant) {
       await Restaurant.findByIdAndDelete(restaurant._id);
     }
-    res.status(500).json({ success: false, error: error.message });
+    res.status(500).json({ success: false, error: "Server Error" });
   }
 };
 
 exports.logIn = async (req, res, next) => {
-  const { email, password } = req.body;
+  let email, password;
+
+  try {
+    ({ email, password } = req.body);
+  } catch (error) {
+    return res.status(500).json({ success: false, error: "Invalid Request" });
+  }
 
   if (!email || !password) {
-    res.status(400).json({ success: false, error: "Fill all details." });
+    return res.status(400).json({ success: false, error: "Fill all details." });
   }
 
   const restaurant = await Restaurant.findOne({ email });
   if (!restaurant) {
-    return res.status(400).json({ success: false, error: "Invalid email" });
+    return res
+      .status(400)
+      .json({ success: false, error: "Email not registered." });
   }
 
   const validPassword = await bcrypt.compare(password, restaurant.password);
@@ -97,10 +111,16 @@ exports.logIn = async (req, res, next) => {
 };
 
 exports.changePassword = async (req, res, next) => {
-  const { oldPassword, newPassword } = req.body;
+  let oldPassword, newPassword;
+
+  try {
+    ({ oldPassword, newPassword } = req.body);
+  } catch (error) {
+    return res.status(500).json({ success: false, error: "Invalid Request" });
+  }
 
   if (!oldPassword || !newPassword) {
-    res.status(400).json({ success: false, error: "Fill all details." });
+    return res.status(400).json({ success: false, error: "Fill all details." });
   }
 
   const restaurant = req.user;

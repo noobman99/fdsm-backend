@@ -38,12 +38,12 @@ const restaurantAuth = async (req, res, next) => {
 
     next();
   } catch (error) {
-    if (err.name === "TokenExpiredError") {
+    if (error.name === "TokenExpiredError") {
       res.status(801).json({
         success: false,
         error: "Login Session expired. Please login again.",
       });
-    } else if (err.name === "JsonWebTokenError") {
+    } else if (error.name === "JsonWebTokenError") {
       res.status(800).json({
         success: false,
         error: "Invalid credentials. Please login again.",
