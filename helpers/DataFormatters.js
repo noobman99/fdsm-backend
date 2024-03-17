@@ -48,6 +48,7 @@ exports.formatOrder = async (order, showOtp = false) => {
     deliverer: this.formatDeliverer(deliverer),
     deliveryAddress: order.deliveryAddress,
     items,
+    total: order.total,
     isPaid: order.isPaid,
     uid: order.id,
     isCompleted: order.isCompleted,
@@ -56,6 +57,7 @@ exports.formatOrder = async (order, showOtp = false) => {
 
   if (showOtp && !order.isCompleted) {
     res.otp = order.otp;
+    res.etd = order.etd;
   }
 
   return res;

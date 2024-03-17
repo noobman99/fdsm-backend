@@ -37,6 +37,15 @@ const orderSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    total: {
+      type: Number,
+      required: true,
+      min: 1,
+    },
+    etd: {
+      type: Date,
+      required: true,
+    },
     isPaid: {
       type: Number, // 0 - not paid, 1 - paid directly, 2 - paid to deliverer
       default: 0,

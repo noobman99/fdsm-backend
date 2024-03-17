@@ -185,6 +185,8 @@ exports.newOrder = async (req, res, next) => {
 
   let items = [];
 
+  let total = 0;
+
   for (let item of req.body.items) {
     let dish = await Dish.findById(item.dish);
 
@@ -196,11 +198,15 @@ exports.newOrder = async (req, res, next) => {
       return res.status(400).json({ error: "Invalid dish" });
     }
 
+    total += dish.price * item.quantity;
+
     items.push({
       dish: dish._id,
       quantity: item.quantity,
     });
   }
+
+  const etd = new Date(Date.now() + 60 * 60 * 1000);
 
   let order = {
     by: customer._id,
@@ -209,19 +215,15 @@ exports.newOrder = async (req, res, next) => {
     deliveryAddress: req.body.deliveryAddress,
     otp,
     items,
+    total,
+    etd,
     isPaid: req.body.isPaid,
     isCompleted: false,
   };
 
   order = await Order.create(order);
 
-  customer.orders.push(order._id);
-  await customer.save({
-    validateBeforeSave: true,
-    isNew: false,
-  });
-
-  res.json(await formatOrder(order));
+  res.json(await formatOrder(order, true));
 };
 
 exports.reviewRestaurant = async (req, res, next) => {
