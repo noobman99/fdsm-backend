@@ -96,8 +96,13 @@ exports.orders = async (req, res, next) => {
 exports.orderById = async (req, res, next) => {
   // Order info route
   let order;
+
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    return res.status(400).json({ error: "Invalid order id" });
+  }
+
   try {
-    order = await Order.findById(mongoose.Types.ObjectId(req.params.id));
+    order = await Order.findById(req.params.id);
   } catch (error) {
     return res.status(404).json({ error: "Order not found" });
   }
@@ -153,13 +158,17 @@ exports.removeFoodItem = async (req, res, next) => {
   // Remove food item route
   let restaurant = req.user;
 
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    return res.status(400).json({ error: "Invalid dish id" });
+  }
+
   let dish = await Dish.find({
     restaurant: restaurant._id,
-    _id: mongoose.Types.ObjectId(req.params.id),
+    _id: req.params.id,
   });
 
   if (!dish) {
-    res.status(400).json({ error: "Food item not found." });
+    return res.status(400).json({ error: "Food item not found." });
   }
 
   restaurant.menu = restaurant.menu.filter((item) => item !== dish._id);
@@ -178,19 +187,31 @@ exports.updateFoodItem = async (req, res, next) => {
   // Update food item route
   let restaurant = req.user;
 
-  let dish = await Dish.find({
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    return res.status(400).json({ error: "Invalid dish id" });
+  }
+
+  let dish = await Dish.findOne({
     restaurant: restaurant._id,
-    _id: mongoose.Types.ObjectId(req.params.id),
+    _id: req.params.id,
   });
 
   if (!dish) {
-    res.status(400).json({ error: "Food item not found." });
+    return res.status(400).json({ error: "Food item not found." });
   }
 
-  dish.name = req.body.name;
-  dish.image = req.body.image;
-  dish.price = req.body.price;
-  dish.isAvailable = req.body.isAvailable;
+  if (req.body.name) {
+    dish.name = req.body.name;
+  }
+  if (req.body.image) {
+    dish.image = req.body.image;
+  }
+  if (req.body.price) {
+    dish.price = req.body.price;
+  }
+  if (req.body.isAvailable) {
+    dish.isAvailable = req.body.isAvailable;
+  }
 
   await dish.save({
     validateBeforeSave: true,
@@ -202,6 +223,11 @@ exports.updateFoodItem = async (req, res, next) => {
 
 exports.foodItem = async (req, res, next) => {
   // Food item info route
+
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    return res.status(400).json({ error: "Invalid dish id" });
+  }
+
   let dish = await Dish.findById(req.params.id);
 
   if (!dish) {
