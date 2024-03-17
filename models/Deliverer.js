@@ -43,10 +43,6 @@ const delivererSchema = new mongoose.Schema({
       type: Number,
     },
   },
-  orders: {
-    type: [mongoose.Schema.Types.ObjectId],
-    ref: "Order",
-  },
 });
 
 const Deliverer = mongoose.model("Deliverer", delivererSchema);

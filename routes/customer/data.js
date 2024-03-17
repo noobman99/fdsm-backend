@@ -57,7 +57,7 @@ exports.editInfo = async (req, res, next) => {
 exports.orders = async (req, res, next) => {
   // Customer orders route
   let customer = req.user;
-  let orders = await Order.find({ _id: { $in: customer.orders } });
+  let orders = await Order.find({ by: customer._id });
 
   let resJson = [];
 

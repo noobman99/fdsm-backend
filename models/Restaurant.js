@@ -55,10 +55,6 @@ const restaurantSchema = new mongoose.Schema({
     type: [mongoose.Schema.Types.ObjectId],
     ref: "Dish",
   },
-  orders: {
-    type: [mongoose.Schema.Types.ObjectId],
-    ref: "Order",
-  },
 });
 
 const Restaurant = mongoose.model("Restaurant", restaurantSchema);

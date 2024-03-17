@@ -1,8 +1,8 @@
 const express = require("express");
 const Order = require("../../models/Order");
 const {
-  formatDeliverer,
   formatOrder,
+  formatDeliverer,
 } = require("../../helpers/DataFormatters");
 
 const router = express.Router();
@@ -55,7 +55,7 @@ exports.orders = async (req, res, next) => {
   // Deliverer orders route
   let deliverer = req.user;
 
-  let orders = await Order.find({ _id: { $in: deliverer.orders } });
+  let orders = await Order.find({ deliveryBy: deliverer._id });
 
   let resJson = [];
 
@@ -63,7 +63,7 @@ exports.orders = async (req, res, next) => {
     resJson.push(await formatOrder(order));
   }
 
-  res.json(orders);
+  res.json(resJson);
 };
 
 exports.orderById = async (req, res, next) => {

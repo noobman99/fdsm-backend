@@ -82,7 +82,7 @@ exports.menu = async (req, res, next) => {
 exports.orders = async (req, res, next) => {
   // Customer orders route
   let restaurant = req.user;
-  let orders = await Order.find({ _id: { $in: restaurant.orders } });
+  let orders = await Order.find({ from: restaurant._id });
 
   let resJson = [];
 

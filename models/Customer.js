@@ -26,10 +26,6 @@ const customerSchema = new mongoose.Schema({
   address: {
     type: String,
   },
-  orders: {
-    type: [mongoose.Schema.Types.ObjectId],
-    ref: "Order",
-  },
   favouriteRestaurants: {
     type: [mongoose.Schema.Types.ObjectId],
     ref: "Restaurant",
