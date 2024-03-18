@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
+const cors = require("cors");
 
 const customerApi = require("./routes/customer/api");
 const restaurantApi = require("./routes/restaurant/api");
@@ -18,6 +19,9 @@ const port = 3000;
 try {
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
+
+  // Enable CORS
+  app.use(cors());
 } catch (error) {
   console.log(error);
 }
