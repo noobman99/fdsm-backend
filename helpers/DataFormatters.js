@@ -54,9 +54,15 @@ exports.formatOrder = async (order, options = { showOtp: false }) => {
   }
 
   let res = {
-    customer: this.formatCustomer(customer),
-    restaurant: await this.formatRestaurant(restaurant),
-    deliverer: this.formatDeliverer(deliverer),
+    customer: await this.formatCustomer(customer),
+    restaurant: await this.formatRestaurant(restaurant, {
+      showPhone: true,
+      showAddress: true,
+    }),
+    deliverer: this.formatDeliverer(deliverer, {
+      showPhone: true,
+      showLocation: true,
+    }),
     deliveryAddress: order.deliveryAddress,
     items,
     total: order.total,
@@ -110,6 +116,10 @@ exports.formatRestaurant = async (
 
   if (options.showEmail) {
     res.email = restaurant.email;
+  }
+
+  if (options.showAddress) {
+    res.address = restaurant.address.text;
   }
 
   if (options.showMenu || options.showBriefMenu) {
@@ -196,7 +206,10 @@ exports.formatDeliverer = (
   }
 
   if (options.showLocation) {
-    res.location = deliverer.location;
+    res.location = {
+      lat: deliverer.location.lat,
+      lon: deliverer.location.lon,
+    };
   }
 
   return res;
