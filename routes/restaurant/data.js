@@ -7,6 +7,7 @@ const {
 } = require("../../helpers/DataFormatters");
 const Dish = require("../../models/Dish");
 const { default: mongoose } = require("mongoose");
+const { geoCode } = require("../../helpers/maps");
 const router = express.Router();
 
 // Routes
@@ -34,7 +35,14 @@ exports.editInfo = async (req, res, next) => {
     restaurant.phone = req.body.phone;
   }
   if (req.body.address) {
-    restaurant.address = req.body.address;
+    if (typeof req.body.address === "string") {
+      let adr = req.body.address;
+      adr = encodeURIComponent(adr);
+      adr = await geoCode(adr);
+      restaurant.address = { ...adr, text: req.body.address };
+    } else {
+      restaurant.address = req.body.address;
+    }
   }
   if (req.body.timings) {
     restaurant.timings = req.body.timings;

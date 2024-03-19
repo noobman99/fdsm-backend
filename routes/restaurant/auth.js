@@ -2,6 +2,7 @@ const validator = require("validator");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const Restaurant = require("../../models/Restaurant");
+const { geoCode } = require("../../helpers/maps");
 
 const createToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "1h" });
@@ -30,7 +31,7 @@ exports.signUp = async (req, res, next) => {
     res.status(500).json({ success: false, error: "Invalid Request" });
   }
 
-  if (!name || !email || !password) {
+  if (!name || !email || !password || !address || !timings || !tags || !phone) {
     res.status(400).json({ success: false, error: "Fill all details." });
   }
 
@@ -40,6 +41,12 @@ exports.signUp = async (req, res, next) => {
 
   if (!validator.isMobilePhone(phone)) {
     res.status(400).json({ success: false, error: "Invalid phone number" });
+  }
+
+  if (typeof address === "string") {
+    let adr = encodeURIComponent(address);
+    adr = await geoCode(adr);
+    address = { ...adr, text: address };
   }
 
   let restaurant = await Restaurant.findOne({ email });

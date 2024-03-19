@@ -39,7 +39,13 @@ exports.editInfo = async (req, res, next) => {
     customer.phone = req.body.phone;
   }
   if (req.body.address) {
-    customer.address = req.body.address;
+    if (typeof req.body.address === "string") {
+      let adr = encodeURIComponent(req.body.address);
+      adr = await geoCode(adr);
+      customer.address = { ...adr, text: req.body.address };
+    } else {
+      customer.address = req.body.address;
+    }
   }
 
   try {
@@ -193,7 +199,7 @@ exports.newOrder = async (req, res, next) => {
   let deliveryAddress = req.body.deliveryAddress;
   if (typeof deliveryAddress === "string") {
     deliveryAddress = encodeURIComponent(deliveryAddress);
-    deliveryAddress = geoCode(deliveryAddress);
+    deliveryAddress = await geoCode(deliveryAddress);
   }
   let { time: timeToDel } = await getDistTime(
     restaurant.address,

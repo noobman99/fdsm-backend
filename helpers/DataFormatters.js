@@ -69,7 +69,7 @@ exports.formatRestaurant = async (restaurant, containMenu = false) => {
     email: restaurant.email,
     uid: restaurant.uid,
     phone: restaurant.phone,
-    address: restaurant.address,
+    address: restaurant.address.text,
     timings: restaurant.timings,
     rating: restaurant.rating,
     tags: restaurant.tags,
@@ -94,7 +94,7 @@ exports.formatCustomer = (customer, containFavouriteRestaurants = false) => {
     email: customer.email,
     uid: customer.uid,
     phone: customer.phone,
-    address: customer.address,
+    address: customer.address.text,
   };
 
   if (containFavouriteRestaurants) {
@@ -110,7 +110,7 @@ exports.formatDeliverer = (deliverer, showWorkingStatus = false) => {
     email: deliverer.email,
     uid: deliverer.uid,
     phone: deliverer.phone,
-    address: deliverer.address,
+    address: deliverer.address.text,
   };
 
   if (showWorkingStatus) {
@@ -126,6 +126,6 @@ exports.formatManagement = (management) => {
     email: management.email,
     uid: management.uid,
     phone: management.phone,
-    address: management.address,
+    address: management.address.text,
   };
 };
