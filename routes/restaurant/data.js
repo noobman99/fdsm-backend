@@ -16,7 +16,15 @@ exports.info = async (req, res, next) => {
   // Customer info route
   let restaurant = req.user;
 
-  let resJson = await formatRestaurant(restaurant, { containMenu: true });
+  let resJson = await formatRestaurant(restaurant, {
+    showMenu: true,
+    showReviews: true,
+    showAddress: true,
+    showPhone: true,
+    showEmail: true,
+    showTimings: true,
+    showTags: true,
+  });
 
   res.json(resJson);
 };
@@ -83,6 +91,8 @@ exports.menu = async (req, res, next) => {
     dish = await formatDish(dish, {
       showAvalability: true,
       showRestaurant: true,
+      showImage: true,
+      showPrice: true,
     });
 
     menu.push(dish);
@@ -251,7 +261,12 @@ exports.foodItem = async (req, res, next) => {
   }
 
   res.json(
-    await formatDish(dish, { showAvalability: true, showRestaurant: true })
+    await formatDish(dish, {
+      showAvalability: true,
+      showRestaurant: true,
+      showImage: true,
+      showPrice: true,
+    })
   );
 };
 

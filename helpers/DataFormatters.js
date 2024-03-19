@@ -5,12 +5,15 @@ const Dish = require("../models/Dish");
 
 exports.formatDish = async (
   dish,
-  options = { showAvalability: false, showRestaurant: false }
+  options = {
+    showAvalability: false,
+    showRestaurant: false,
+    showImage: false,
+    showPrice: false,
+  }
 ) => {
   let res = {
     name: dish.name,
-    price: dish.price,
-    image: dish.image,
     uid: dish.id,
   };
 
@@ -20,6 +23,14 @@ exports.formatDish = async (
 
   if (options.showRestaurant) {
     res.restaurant = (await Restaurant.findById(dish.restaurant, "name")).name;
+  }
+
+  if (options.showImage) {
+    res.image = dish.image;
+  }
+
+  if (options.showPrice) {
+    res.price = dish.price;
   }
 
   return res;
@@ -65,26 +76,53 @@ exports.formatOrder = async (order, options = { showOtp: false }) => {
 
 exports.formatRestaurant = async (
   restaurant,
-  options = { containMenu: false, containBriefMenu: false }
+  options = {
+    showMenu: false,
+    showBriefMenu: false,
+    showRating: false,
+    showTags: false,
+    showTimings: false,
+    showPhone: false,
+    showEmail: false,
+    showAddress: false,
+  }
 ) => {
   let res = {
     name: restaurant.name,
-    email: restaurant.email,
     uid: restaurant.uid,
-    phone: restaurant.phone,
-    address: restaurant.address.text,
-    timings: restaurant.timings,
-    rating: restaurant.rating,
-    tags: restaurant.tags,
   };
 
-  if (options.containMenu || options.containBriefMenu) {
+  if (options.showRating) {
+    res.rating = restaurant.rating;
+  }
+
+  if (options.showTags) {
+    res.tags = restaurant.tags;
+  }
+
+  if (options.showTimings) {
+    res.timings = restaurant.timings;
+  }
+
+  if (options.showPhone) {
+    res.phone = restaurant.phone;
+  }
+
+  if (options.showEmail) {
+    res.email = restaurant.email;
+  }
+
+  if (options.showMenu || options.showBriefMenu) {
     res.menu = [];
 
     for (let item of restaurant.menu) {
       let dish = await Dish.findById(item);
-      if (options.containMenu) {
-        dish = await this.formatDish(dish, { showAvalability: true });
+      if (options.showMenu) {
+        dish = await this.formatDish(dish, {
+          showAvalability: true,
+          showPrice: true,
+          showImage: true,
+        });
       } else {
         dish = dish.name;
       }
@@ -95,20 +133,37 @@ exports.formatRestaurant = async (
   return res;
 };
 
-exports.formatCustomer = (
+exports.formatCustomer = async (
   customer,
-  options = { containFavouriteRestaurants: false }
+  options = {
+    showFavouriteRestaurants: false,
+    showEmail: false,
+    showPhone: false,
+    showAddress: false,
+  }
 ) => {
   let res = {
     name: customer.name,
-    email: customer.email,
     uid: customer.uid,
-    phone: customer.phone,
-    address: customer.address.text,
   };
 
-  if (options.containFavouriteRestaurants) {
-    res.favouriteRestaurants = customer.favouriteRestaurants;
+  if (options.showFavouriteRestaurants) {
+    let favs = await Restaurant.find({
+      _id: { $in: customer.favouriteRestaurants },
+    });
+    res.favouriteRestaurants = favs.map((fav) => this.formatRestaurant(fav));
+  }
+
+  if (options.showEmail) {
+    res.email = customer.email;
+  }
+
+  if (options.showPhone) {
+    res.phone = customer.phone;
+  }
+
+  if (options.showAddress) {
+    res.address = customer.address.text;
   }
 
   return res;
@@ -116,17 +171,32 @@ exports.formatCustomer = (
 
 exports.formatDeliverer = (
   deliverer,
-  options = { showWorkingStatus: false }
+  options = {
+    showWorkingStatus: false,
+    showPhone: false,
+    showEmail: false,
+    showLocation: false,
+  }
 ) => {
   let res = {
     name: deliverer.name,
-    email: deliverer.email,
     uid: deliverer.uid,
-    phone: deliverer.phone,
   };
 
   if (options.showWorkingStatus) {
     res.workingStatus = deliverer.workingStatus;
+  }
+
+  if (options.showPhone) {
+    res.phone = deliverer.phone;
+  }
+
+  if (options.showEmail) {
+    res.email = deliverer.email;
+  }
+
+  if (options.showLocation) {
+    res.location = deliverer.location;
   }
 
   return res;

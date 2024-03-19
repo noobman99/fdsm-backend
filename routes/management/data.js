@@ -47,7 +47,13 @@ exports.customers = async (req, res, next) => {
   let resJson = [];
 
   for (let customer of customers) {
-    resJson.push(formatCustomer(customer));
+    resJson.push(
+      await formatCustomer(customer, {
+        showAddress: true,
+        showPhone: true,
+        showEmail: true,
+      })
+    );
   }
 
   res.json(resJson);
@@ -61,10 +67,11 @@ exports.customerById = async (req, res, next) => {
     return res.status(404).json({ error: "Customer not found" });
   }
 
-  let resJson = formatCustomer(customer);
-
-  resJson.favouriteRestaurants = await Restaurant.find({
-    _id: { $in: customer.favouriteRestaurants },
+  let resJson = await formatCustomer(customer, {
+    showAddress: true,
+    showPhone: true,
+    showEmail: true,
+    showFavouriteRestaurants: true,
   });
 
   res.json(resJson);
@@ -97,7 +104,13 @@ exports.deliverers = async (req, res, next) => {
   let temp;
 
   for (let deliveryAgent of deliveryAgents) {
-    resJson.push(formatDeliverer(deliveryAgent));
+    resJson.push(
+      formatDeliverer(deliveryAgent, {
+        showWorkingStatus: true,
+        showPhone: true,
+        showEmail: true,
+      })
+    );
   }
 
   res.json(resJson);
@@ -111,7 +124,12 @@ exports.delivererById = async (req, res, next) => {
     return res.status(404).json({ error: "Delivery agent not found" });
   }
 
-  let resJson = formatDeliverer(deliveryAgent, { showWorkingStatus: true });
+  let resJson = formatDeliverer(deliveryAgent, {
+    showWorkingStatus: true,
+    showPhone: true,
+    showEmail: true,
+    showLocation: true,
+  });
 
   res.json(resJson);
 };
@@ -143,7 +161,15 @@ exports.restaurants = async (req, res, next) => {
 
   for (let restaurant of restaurants) {
     resJson.push(
-      await formatRestaurant(restaurant, { containBriefMenu: true })
+      await formatRestaurant(restaurant, {
+        showBriefMenu: true,
+        showRating: true,
+        showAddress: true,
+        showPhone: true,
+        showEmail: true,
+        showTags: true,
+        showTimings: true,
+      })
     );
   }
 
@@ -158,7 +184,15 @@ exports.restaurantById = async (req, res, next) => {
     return res.status(404).json({ error: "Restaurant not found" });
   }
 
-  let resJson = await formatRestaurant(restaurant, { containMenu: true });
+  let resJson = await formatRestaurant(restaurant, {
+    showMenu: true,
+    showRating: true,
+    showTags: true,
+    showTimings: true,
+    showPhone: true,
+    showEmail: true,
+    showAddress: true,
+  });
 
   res.json(resJson);
 };

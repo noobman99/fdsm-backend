@@ -20,7 +20,11 @@ exports.info = async (req, res, next) => {
   // Customer info route
   let customer = req.user;
 
-  let resJson = formatCustomer(customer);
+  let resJson = await formatCustomer(customer, {
+    showAddress: true,
+    showPhone: true,
+    showEmail: true,
+  });
 
   res.json(resJson);
 };
@@ -111,7 +115,16 @@ exports.favouriteRestaurants = async (req, res, next) => {
   let resJson = [];
 
   for (let restaurant of restaurants) {
-    resJson.push(await formatRestaurant(restaurant));
+    resJson.push(
+      await formatRestaurant(restaurant, {
+        showRating: true,
+        showEmail: true,
+        showPhone: true,
+        showAddress: true,
+        showTags: true,
+        showTimings: true,
+      })
+    );
   }
 
   res.json(resJson);
@@ -148,7 +161,15 @@ exports.restaurants = async (req, res, next) => {
 
   for (let restaurant of restaurants) {
     resJson.push(
-      await formatRestaurant(restaurant, { containBriefMenu: true })
+      await formatRestaurant(restaurant, {
+        showBriefMenu: true,
+        showRating: true,
+        showAddress: true,
+        showPhone: true,
+        showEmail: true,
+        showTags: true,
+        showTimings: true,
+      })
     );
   }
 
@@ -163,7 +184,15 @@ exports.restaurantById = async (req, res, next) => {
     return res.status(404).json({ error: "Restaurant not found" });
   }
 
-  let resJson = await formatRestaurant(restaurant, { containMenu: true });
+  let resJson = await formatRestaurant(restaurant, {
+    showMenu: true,
+    showRating: true,
+    showTags: true,
+    showTimings: true,
+    showPhone: true,
+    showEmail: true,
+    showAddress: true,
+  });
 
   res.json(resJson);
 };
