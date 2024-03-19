@@ -28,19 +28,21 @@ exports.signUp = async (req, res, next) => {
   try {
     ({ name, email, phone, password, address, timings, tags } = req.body);
   } catch (error) {
-    res.status(500).json({ success: false, error: "Invalid Request" });
+    return res.status(500).json({ success: false, error: "Invalid Request" });
   }
 
-  if (!name || !email || !password || !address || !timings || !tags || !phone) {
-    res.status(400).json({ success: false, error: "Fill all details." });
+  if (!name || !email || !password || !address || !timings || !phone) {
+    return res.status(400).json({ success: false, error: "Fill all details." });
   }
 
   if (!validator.isEmail(email)) {
-    res.status(400).json({ success: false, error: "Invalid email" });
+    return res.status(400).json({ success: false, error: "Invalid email" });
   }
 
   if (!validator.isMobilePhone(phone)) {
-    res.status(400).json({ success: false, error: "Invalid phone number" });
+    return res
+      .status(400)
+      .json({ success: false, error: "Invalid phone number" });
   }
 
   if (typeof address === "string") {
@@ -52,7 +54,9 @@ exports.signUp = async (req, res, next) => {
   let restaurant = await Restaurant.findOne({ email });
 
   if (restaurant) {
-    res.status(400).json({ success: false, error: "Email already exists" });
+    return res
+      .status(400)
+      .json({ success: false, error: "Email already exists" });
   }
 
   const salt = await bcrypt.genSalt(10);

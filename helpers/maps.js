@@ -42,6 +42,11 @@ exports.getDistTime = async (location1, location2) => {
     let res = await fetch(url);
     let data = await res.json();
 
+    if (!res.ok) {
+      console.log(res);
+      throw new Error("Network response was not ok");
+    }
+
     const distance = data["routes"][0]["summary"]["lengthInMeters"];
     const time = data["routes"][0]["summary"]["travelTimeInSeconds"];
 
@@ -49,28 +54,30 @@ exports.getDistTime = async (location1, location2) => {
   } catch (error) {
     console.error("There was a problem with the fetch operation:", error);
 
-    return { distance: 0, time: 0 };
+    return { distance: -1, time: -1 };
   }
 };
 
 exports.geoCode = async (address) => {
+  const key = process.env.TOMTOM_API_KEY;
+
   try {
-    const response = await fetch(
-      "https://api.tomtom.com/search/2/geocode/" +
-        address +
-        ".json?key=" +
-        API_KEY
+    const res = await fetch(
+      "https://api.tomtom.com/search/2/geocode/" + address + ".json?key=" + key
     );
 
-    if (!response.ok) {
+    if (!res.ok) {
+      console.log(res);
       throw new Error("Network response was not ok");
     }
 
-    const data = await response.json();
-    console.log(data);
+    const data = await res.json();
+    // console.log(data["results"][0]);
     return data["results"][0]["position"];
   } catch (error) {
     console.error("There was a problem with the fetch operation:", error);
+
+    return { lat: -1, lon: -1 };
   }
 };
 

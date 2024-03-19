@@ -95,15 +95,11 @@ exports.logIn = async (req, res, next) => {
   try {
     ({ email, password } = req.body);
   } catch (error) {
-    res.status(500).json({ success: false, error: "Invalid Request" });
-
-    return;
+    return res.status(500).json({ success: false, error: "Invalid Request" });
   }
 
   if (!email || !password) {
-    res.status(400).json({ success: false, error: "Fill all details." });
-
-    return;
+    return res.status(400).json({ success: false, error: "Fill all details." });
   }
 
   const customer = await Customer.findOne({ email });
@@ -122,18 +118,15 @@ exports.logIn = async (req, res, next) => {
 };
 
 exports.changePassword = async (req, res, next) => {
+  let oldPassword, newPassword;
   try {
-    const { oldPassword, newPassword } = req.body;
+    ({ oldPassword, newPassword } = req.body);
   } catch (error) {
-    res.status(500).json({ success: false, error: "Invalid Request" });
-
-    return;
+    return res.status(500).json({ success: false, error: "Invalid Request" });
   }
 
   if (!oldPassword || !newPassword) {
-    res.status(400).json({ success: false, error: "Fill all details." });
-
-    return;
+    return res.status(400).json({ success: false, error: "Fill all details." });
   }
 
   const customer = req.user;

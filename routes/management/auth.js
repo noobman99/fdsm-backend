@@ -24,16 +24,18 @@ const RandomString = (length) => {
 exports.signUp = async (req, res, next) => {
   const { name, email, phone, password } = req.body;
 
-  if (!username || !email || !password) {
-    res.status(400).json({ success: false, error: "Fill all details." });
+  if (!name || !email || !password || !phone) {
+    return res.status(400).json({ success: false, error: "Fill all details." });
   }
 
   if (!validator.isEmail(email)) {
-    res.status(400).json({ success: false, error: "Invalid email" });
+    return res.status(400).json({ success: false, error: "Invalid email" });
   }
 
   if (!validator.isMobilePhone(phone)) {
-    res.status(400).json({ success: false, error: "Invalid phone number" });
+    return res
+      .status(400)
+      .json({ success: false, error: "Invalid phone number" });
   }
 
   let management = await Management.findOne({ email });
@@ -75,7 +77,7 @@ exports.logIn = async (req, res, next) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    res.status(400).json({ success: false, error: "Fill all details." });
+    return res.status(400).json({ success: false, error: "Fill all details." });
   }
 
   const management = await Management.findOne({ email });
@@ -97,7 +99,7 @@ exports.changePassword = async (req, res, next) => {
   const { oldPassword, newPassword } = req.body;
 
   if (!oldPassword || !newPassword) {
-    res.status(400).json({ success: false, error: "Fill all details." });
+    return res.status(400).json({ success: false, error: "Fill all details." });
   }
 
   const management = req.user;
