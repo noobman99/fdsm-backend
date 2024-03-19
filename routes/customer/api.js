@@ -17,7 +17,7 @@ router.post("/signup", authEndpoints.signUp);
 router.get("/info", dataEndpoints.info);
 router.put("/info", dataEndpoints.editInfo);
 router.get("/orders", dataEndpoints.orders);
-router.post("/neworder", dataEndpoints.newOrder);
+router.post("/order", dataEndpoints.newOrder);
 router.get("/order/:id", dataEndpoints.orderById);
 router.get("/favouriterestaurants", dataEndpoints.favouriteRestaurants);
 router.post("/favouriterestaurant/:id", dataEndpoints.newFavouriteRestaurant);

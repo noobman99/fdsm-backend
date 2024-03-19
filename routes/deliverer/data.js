@@ -137,6 +137,13 @@ exports.finishOrder = async (req, res, next) => {
   order.isCompleted = true;
   order.isPaid = order.isPaid ? 1 : 2;
 
+  deliverer.workingStatus = 1;
+
+  await deliverer.save({
+    validateBeforeSave: true,
+    isNew: false,
+  });
+
   await order.save({
     validateBeforeSave: true,
     isNew: false,
