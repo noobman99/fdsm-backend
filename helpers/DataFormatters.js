@@ -25,7 +25,7 @@ exports.formatDish = async (
   return res;
 };
 
-exports.formatOrder = async (order, showOtp = false) => {
+exports.formatOrder = async (order, options = { showOtp: false }) => {
   let customer = await Customer.findById(order.by);
   let restaurant = await Restaurant.findById(order.from);
   let deliverer = await Deliverer.findById(order.deliveryBy);
@@ -55,7 +55,7 @@ exports.formatOrder = async (order, showOtp = false) => {
     orderTime: order._id.getTimestamp(),
   };
 
-  if (showOtp && !order.isCompleted) {
+  if (options.showOtp && !order.isCompleted) {
     res.otp = order.otp;
     res.etd = order.etd;
   }
@@ -63,7 +63,10 @@ exports.formatOrder = async (order, showOtp = false) => {
   return res;
 };
 
-exports.formatRestaurant = async (restaurant, containMenu = false) => {
+exports.formatRestaurant = async (
+  restaurant,
+  options = { containMenu: false, containBriefMenu: false }
+) => {
   let res = {
     name: restaurant.name,
     email: restaurant.email,
@@ -75,12 +78,16 @@ exports.formatRestaurant = async (restaurant, containMenu = false) => {
     tags: restaurant.tags,
   };
 
-  if (containMenu) {
+  if (options.containMenu || options.containBriefMenu) {
     res.menu = [];
 
     for (let item of restaurant.menu) {
       let dish = await Dish.findById(item);
-      dish = await this.formatDish(dish, { showAvalability: true });
+      if (options.containMenu) {
+        dish = await this.formatDish(dish, { showAvalability: true });
+      } else {
+        dish = dish.name;
+      }
       res.menu.push(dish);
     }
   }
@@ -88,7 +95,10 @@ exports.formatRestaurant = async (restaurant, containMenu = false) => {
   return res;
 };
 
-exports.formatCustomer = (customer, containFavouriteRestaurants = false) => {
+exports.formatCustomer = (
+  customer,
+  options = { containFavouriteRestaurants: false }
+) => {
   let res = {
     name: customer.name,
     email: customer.email,
@@ -97,14 +107,17 @@ exports.formatCustomer = (customer, containFavouriteRestaurants = false) => {
     address: customer.address.text,
   };
 
-  if (containFavouriteRestaurants) {
+  if (options.containFavouriteRestaurants) {
     res.favouriteRestaurants = customer.favouriteRestaurants;
   }
 
   return res;
 };
 
-exports.formatDeliverer = (deliverer, showWorkingStatus = false) => {
+exports.formatDeliverer = (
+  deliverer,
+  options = { showWorkingStatus: false }
+) => {
   let res = {
     name: deliverer.name,
     email: deliverer.email,
@@ -112,7 +125,7 @@ exports.formatDeliverer = (deliverer, showWorkingStatus = false) => {
     phone: deliverer.phone,
   };
 
-  if (showWorkingStatus) {
+  if (options.showWorkingStatus) {
     res.workingStatus = deliverer.workingStatus;
   }
 

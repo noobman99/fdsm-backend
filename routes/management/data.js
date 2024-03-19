@@ -111,7 +111,7 @@ exports.delivererById = async (req, res, next) => {
     return res.status(404).json({ error: "Delivery agent not found" });
   }
 
-  let resJson = formatDeliverer(deliveryAgent);
+  let resJson = formatDeliverer(deliveryAgent, { showWorkingStatus: true });
 
   res.json(resJson);
 };
@@ -142,7 +142,9 @@ exports.restaurants = async (req, res, next) => {
   let resJson = [];
 
   for (let restaurant of restaurants) {
-    resJson.push(await formatRestaurant(restaurant));
+    resJson.push(
+      await formatRestaurant(restaurant, { containBriefMenu: true })
+    );
   }
 
   res.json(resJson);
@@ -156,7 +158,7 @@ exports.restaurantById = async (req, res, next) => {
     return res.status(404).json({ error: "Restaurant not found" });
   }
 
-  let resJson = await formatRestaurant(restaurant, true);
+  let resJson = await formatRestaurant(restaurant, { containMenu: true });
 
   res.json(resJson);
 };

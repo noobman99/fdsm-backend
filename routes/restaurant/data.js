@@ -16,7 +16,7 @@ exports.info = async (req, res, next) => {
   // Customer info route
   let restaurant = req.user;
 
-  let resJson = await formatRestaurant(restaurant, true);
+  let resJson = await formatRestaurant(restaurant, { containMenu: true });
 
   res.json(resJson);
 };

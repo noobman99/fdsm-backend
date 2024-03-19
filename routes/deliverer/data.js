@@ -14,7 +14,7 @@ exports.info = async (req, res, next) => {
   // Deliverer info route
   let deliverer = req.user;
 
-  let resJson = formatDeliverer(deliverer);
+  let resJson = formatDeliverer(deliverer, { showWorkingStatus: true });
 
   res.json(resJson);
 };
