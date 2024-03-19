@@ -1,5 +1,9 @@
 const Restaurant = require("../../models/Restaurant");
-const findDeliveryAgent = require("../../helpers/findDeliveryAgent");
+const {
+  findDeliveryAgent,
+  getDistTime,
+  geoCode,
+} = require("../../helpers/maps");
 const {
   formatOrder,
   formatRestaurant,
@@ -156,6 +160,7 @@ exports.newOrder = async (req, res, next) => {
   // New order route
   let customer = req.user;
 
+  // Validation
   if (!req.body.restaurant) {
     return res.status(400).json({ error: "Invalid restaurant" });
   }
@@ -172,7 +177,9 @@ exports.newOrder = async (req, res, next) => {
     return res.status(404).json({ error: "Restaurant not found" });
   }
 
-  const deliveryAgent = await findDeliveryAgent(restaurant.address);
+  // Find delivery agent
+  const { deliverer: deliveryAgent, time: timefororder } =
+    await findDeliveryAgent(restaurant.address);
 
   if (!deliveryAgent) {
     return res.status(404).json({
@@ -181,10 +188,23 @@ exports.newOrder = async (req, res, next) => {
     });
   }
 
-  let otp = String(Math.floor(1000 + Math.random() * 8999));
+  // Find delivery time
+
+  let deliveryAddress = req.body.deliveryAddress;
+  if (typeof deliveryAddress === "string") {
+    deliveryAddress = encodeURIComponent(deliveryAddress);
+    deliveryAddress = geoCode(deliveryAddress);
+  }
+  let { time: timeToDel } = await getDistTime(
+    restaurant.address,
+    req.body.deliveryAddress
+  );
+  const max = (a, b) => (a > b ? a : b);
+  const etd = new Date(Date.now() + max(timefororder, 600) + timeToDel + 600); // Estimated time of delivery. 10 minutes buffer time. 10 minutes minimum preparation time
+
+  const otp = String(Math.floor(1000 + Math.random() * 8999));
 
   let items = [];
-
   let total = 0;
 
   for (let item of req.body.items) {
@@ -205,8 +225,6 @@ exports.newOrder = async (req, res, next) => {
       quantity: item.quantity,
     });
   }
-
-  const etd = new Date(Date.now() + 60 * 60 * 1000);
 
   let order = {
     by: customer._id,
