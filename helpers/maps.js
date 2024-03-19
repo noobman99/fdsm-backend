@@ -6,12 +6,7 @@ exports.findDeliveryAgent = async (location) => {
   let deliverer = await Deliverer.find({ workingStatus: 1 });
 
   if (deliverer.length === 0) {
-    console.log("No delivery agent available");
-    return {
-      deliverer: null,
-      distance: -1,
-      time: -1,
-    };
+    throw new Error("No deliverer available");
   }
 
   let nearestDeliverer = deliverer[0];
@@ -42,47 +37,35 @@ exports.getDistTime = async (location1, location2) => {
   let url = `https://api.tomtom.com/routing/1/calculateRoute/${location1.lat},${location1.lon}:${location2.lat},${location2.lon}/json?&sectionType=traffic&report=effectiveSettings&routeType=eco&traffic=true&avoid=unpavedRoads&travelMode=motorcycle&vehicleMaxSpeed=35&vehicleCommercial=false&vehicleEngineType=combustion&key=${key}`;
   // console.log(url);
 
-  try {
-    let res = await fetch(url);
-    let data = await res.json();
+  let res = await fetch(url);
+  let data = await res.json();
 
-    if (!res.ok) {
-      console.log(res);
-      throw new Error("Network response was not ok");
-    }
-
-    const distance = data["routes"][0]["summary"]["lengthInMeters"];
-    const time = data["routes"][0]["summary"]["travelTimeInSeconds"];
-
-    return { distance, time };
-  } catch (error) {
-    console.error("There was a problem with the fetch operation:", error);
-
-    return { distance: -1, time: -1 };
+  if (!res.ok) {
+    console.log(res);
+    throw new Error("Network response was not ok");
   }
+
+  const distance = data["routes"][0]["summary"]["lengthInMeters"];
+  const time = data["routes"][0]["summary"]["travelTimeInSeconds"];
+
+  return { distance, time };
 };
 
 exports.geoCode = async (address) => {
   const key = process.env.TOMTOM_API_KEY;
 
-  try {
-    const res = await fetch(
-      "https://api.tomtom.com/search/2/geocode/" + address + ".json?key=" + key
-    );
+  const res = await fetch(
+    "https://api.tomtom.com/search/2/geocode/" + address + ".json?key=" + key
+  );
 
-    if (!res.ok) {
-      console.log(res);
-      throw new Error("Network response was not ok");
-    }
-
-    const data = await res.json();
-    // console.log(data["results"][0]);
-    return data["results"][0]["position"];
-  } catch (error) {
-    console.error("There was a problem with the fetch operation:", error);
-
-    return { lat: -1, lon: -1 };
+  if (!res.ok) {
+    console.log(res);
+    throw new Error("Network response was not ok");
   }
+
+  const data = await res.json();
+  // console.log(data["results"][0]);
+  return data["results"][0]["position"];
 };
 
 const route = async () => {

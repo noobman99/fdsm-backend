@@ -47,8 +47,12 @@ exports.signUp = async (req, res, next) => {
 
   if (typeof address === "string") {
     let adr = encodeURIComponent(address);
-    adr = await geoCode(adr);
-    address = { ...adr, text: address };
+    try {
+      adr = await geoCode(adr);
+      address = { ...adr, text: address };
+    } catch (error) {
+      return res.status(404).json({ error: "Invalid Address" });
+    }
   }
 
   let restaurant = await Restaurant.findOne({ email });

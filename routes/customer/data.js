@@ -41,8 +41,12 @@ exports.editInfo = async (req, res, next) => {
   if (req.body.address) {
     if (typeof req.body.address === "string") {
       let adr = encodeURIComponent(req.body.address);
-      adr = await geoCode(adr);
-      customer.address = { ...adr, text: req.body.address };
+      try {
+        adr = await geoCode(adr);
+        customer.address = { ...adr, text: req.body.address };
+      } catch (error) {
+        return res.status(404).json({ error: "Invalid Address" });
+      }
     } else {
       customer.address = req.body.address;
     }
@@ -186,10 +190,12 @@ exports.newOrder = async (req, res, next) => {
   }
 
   // Find delivery agent
-  const { deliverer: deliveryAgent, time: timefororder } =
-    await findDeliveryAgent(restaurant.address);
-
-  if (!deliveryAgent) {
+  let deliveryAgent, timefororder;
+  try {
+    ({ deliverer: deliveryAgent, time: timefororder } = await findDeliveryAgent(
+      restaurant.address
+    ));
+  } catch (error) {
     return res.status(404).json({
       error:
         "We are unable to place an order at the moment. Please try again later",
@@ -201,12 +207,26 @@ exports.newOrder = async (req, res, next) => {
   let deliveryAddress = req.body.deliveryAddress;
   if (typeof deliveryAddress === "string") {
     deliveryAddress = encodeURIComponent(deliveryAddress);
-    deliveryAddress = await geoCode(deliveryAddress);
+
+    try {
+      deliveryAddress = await geoCode(deliveryAddress);
+    } catch (error) {
+      return res.status(404).json({ error: "Invalid Delivery Address" });
+    }
   }
-  let { time: timeToDel } = await getDistTime(
-    restaurant.address,
-    deliveryAddress
-  );
+
+  let timeToDel;
+  try {
+    ({ time: timeToDel } = await getDistTime(
+      restaurant.address,
+      deliveryAddress
+    ));
+  } catch (error) {
+    return res.status(404).json({
+      error: `Cannot Deliver from ${restaurant.name} to your address.`,
+    });
+  }
+
   const max = (a, b) => (a > b ? a : b);
   const etd = new Date(Date.now() + max(timefororder, 600) + timeToDel + 600); // Estimated time of delivery. 10 minutes buffer time. 10 minutes minimum preparation time
 

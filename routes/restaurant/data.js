@@ -38,8 +38,12 @@ exports.editInfo = async (req, res, next) => {
     if (typeof req.body.address === "string") {
       let adr = req.body.address;
       adr = encodeURIComponent(adr);
-      adr = await geoCode(adr);
-      restaurant.address = { ...adr, text: req.body.address };
+      try {
+        adr = await geoCode(adr);
+        restaurant.address = { ...adr, text: req.body.address };
+      } catch (error) {
+        return res.status(404).json({ error: "Invalid Address" });
+      }
     } else {
       restaurant.address = req.body.address;
     }
