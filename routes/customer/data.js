@@ -166,21 +166,23 @@ exports.newOrder = async (req, res, next) => {
   // New order route
   let customer = req.user;
 
+  console.log(req.body);
+
   // Validation
   if (!req.body.restaurant) {
-    return res.status(400).json({ error: "Invalid restaurant" });
+    return res.status(401).json({ error: "Invalid restaurant" });
   }
   if (!req.body.items) {
-    return res.status(400).json({ error: "Invalid items" });
+    return res.status(401).json({ error: "Invalid items" });
   }
   if (!req.body.deliveryAddress) {
-    return res.status(400).json({ error: "Invalid delivery address" });
+    return res.status(401).json({ error: "Invalid delivery address" });
   }
 
   const restaurant = await Restaurant.findOne({ uid: req.body.restaurant });
 
   if (!restaurant) {
-    return res.status(404).json({ error: "Restaurant not found" });
+    return res.status(900).json({ error: "Restaurant not found" });
   }
 
   // Find delivery agent
@@ -203,7 +205,7 @@ exports.newOrder = async (req, res, next) => {
   }
   let { time: timeToDel } = await getDistTime(
     restaurant.address,
-    req.body.deliveryAddress
+    deliveryAddress
   );
   const max = (a, b) => (a > b ? a : b);
   const etd = new Date(Date.now() + max(timefororder, 600) + timeToDel + 600); // Estimated time of delivery. 10 minutes buffer time. 10 minutes minimum preparation time
@@ -247,6 +249,11 @@ exports.newOrder = async (req, res, next) => {
 
   order = await Order.create(order);
   deliveryAgent.workingStatus = 2;
+
+  await deliveryAgent.save({
+    validateBeforeSave: true,
+    isNew: false,
+  });
 
   res.json(await formatOrder(order, true));
 };

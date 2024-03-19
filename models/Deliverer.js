@@ -29,8 +29,20 @@ const delivererSchema = new mongoose.Schema({
     default: 0,
   },
   location: {
-    type: String,
-    default: "",
+    type: {
+      lat: {
+        type: mongoose.Types.Decimal128,
+        required: true,
+      },
+      lon: {
+        type: mongoose.Types.Decimal128,
+        required: true,
+      },
+    },
+    default: {
+      lat: 22.32601,
+      lon: 87.31355,
+    },
   },
   reviews: {
     poster: {

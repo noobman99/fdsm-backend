@@ -26,12 +26,12 @@ const customerSchema = new mongoose.Schema({
   address: {
     type: {
       lat: {
-        type: Number,
+        type: mongoose.Types.Decimal128,
         default: 0,
         required: true,
       },
       lon: {
-        type: Number,
+        type: mongoose.Types.Decimal128,
         default: 0,
         required: true,
       },

@@ -17,12 +17,12 @@ router.post("/signup", authEndpoints.signUp);
 router.get("/info", dataEndpoints.info);
 router.put("/info", dataEndpoints.editInfo);
 router.get("/orders", dataEndpoints.orders);
+router.post("/neworder", dataEndpoints.newOrder);
 router.get("/order/:id", dataEndpoints.orderById);
-router.get("/favouriteRestaurants", dataEndpoints.favouriteRestaurants);
-router.post("/favouriteRestaurant/:id", dataEndpoints.newFavouriteRestaurant);
+router.get("/favouriterestaurants", dataEndpoints.favouriteRestaurants);
+router.post("/favouriterestaurant/:id", dataEndpoints.newFavouriteRestaurant);
 router.get("/restaurants", dataEndpoints.restaurants);
 router.get("/restaurant/:id", dataEndpoints.restaurantById);
-router.post("/neworder", dataEndpoints.newOrder);
 router.post("/reviews/restaurant/:id", dataEndpoints.reviewRestaurant);
 router.post("/reviews/deliverer/:id", dataEndpoints.reviewDeliverer);
 

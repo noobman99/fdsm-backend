@@ -110,7 +110,6 @@ exports.formatDeliverer = (deliverer, showWorkingStatus = false) => {
     email: deliverer.email,
     uid: deliverer.uid,
     phone: deliverer.phone,
-    address: deliverer.address.text,
   };
 
   if (showWorkingStatus) {

@@ -26,13 +26,13 @@ const restaurantSchema = new mongoose.Schema({
   address: {
     type: {
       lat: {
-        type: Number,
-        default: 0,
+        type: mongoose.Types.Decimal128,
+        default: 22.32601,
         required: true,
       },
       lon: {
-        type: Number,
-        default: 0,
+        type: mongoose.Types.Decimal128,
+        default: 87.31355,
         required: true,
       },
       text: {
