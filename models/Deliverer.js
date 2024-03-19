@@ -23,9 +23,10 @@ const delivererSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  isWorking: {
-    type: Boolean,
-    default: false,
+  workingStatus: {
+    // 0 - not working, 1 - available, 2 - in a delivery
+    type: Number,
+    default: 0,
   },
   location: {
     type: String,

@@ -222,6 +222,7 @@ exports.newOrder = async (req, res, next) => {
   };
 
   order = await Order.create(order);
+  deliveryAgent.workingStatus = 2;
 
   res.json(await formatOrder(order, true));
 };

@@ -151,8 +151,8 @@ exports.updateLocation = async (req, res, next) => {
 
   deliverer.location = req.body.location;
 
-  if (!deliverer.isWorking) {
-    deliverer.isWorking = true;
+  if (!deliverer.workingStatus) {
+    deliverer.workingStatus = 1;
   }
 
   await deliverer.save({
@@ -167,7 +167,7 @@ exports.pauseWorking = async (req, res, next) => {
   // Pause working route
   let deliverer = req.user;
 
-  deliverer.isWorking = false;
+  deliverer.workingStatus = 0;
 
   await deliverer.save({
     validateBeforeSave: true,

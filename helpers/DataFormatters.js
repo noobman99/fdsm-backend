@@ -104,15 +104,20 @@ exports.formatCustomer = (customer, containFavouriteRestaurants = false) => {
   return res;
 };
 
-exports.formatDeliverer = (deliverer) => {
-  return {
+exports.formatDeliverer = (deliverer, showWorkingStatus = false) => {
+  let res = {
     name: deliverer.name,
     email: deliverer.email,
     uid: deliverer.uid,
     phone: deliverer.phone,
     address: deliverer.address,
-    isWorking: deliverer.isWorking,
   };
+
+  if (showWorkingStatus) {
+    res.workingStatus = deliverer.workingStatus;
+  }
+
+  return res;
 };
 
 exports.formatManagement = (management) => {
