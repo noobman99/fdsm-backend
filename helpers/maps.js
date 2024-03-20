@@ -35,7 +35,7 @@ exports.getDistTime = async (location1, location2) => {
   const key = process.env.TOMTOM_API_KEY;
 
   let url = `https://api.tomtom.com/routing/1/calculateRoute/${location1.lat},${location1.lon}:${location2.lat},${location2.lon}/json?&sectionType=traffic&report=effectiveSettings&routeType=eco&traffic=true&avoid=unpavedRoads&travelMode=motorcycle&vehicleMaxSpeed=35&vehicleCommercial=false&vehicleEngineType=combustion&key=${key}`;
-  // console.log(url);
+  console.log(url);
 
   let res = await fetch(url);
   let data = await res.json();

@@ -45,7 +45,9 @@ exports.formatOrder = async (order, options = { showOtp: false }) => {
 
   for (let item of order.items) {
     let dish = await Dish.findById(item.dish);
-    dish = await this.formatDish(dish);
+    dish = await this.formatDish(dish, {
+      showPrice: true,
+    });
 
     items.push({
       dish,

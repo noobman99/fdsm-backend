@@ -2,6 +2,7 @@ const validator = require("validator");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const Customer = require("../../models/Customer");
+const { geoCode } = require("../../helpers/maps");
 
 const createToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "1h" });
@@ -52,13 +53,15 @@ exports.signUp = async (req, res, next) => {
   }
 
   try {
-    if (typeof address === "string") {
+    console.log(typeof address, address)
+    if (address) {
       let adr = encodeURIComponent(address);
       adr = await geoCode(adr);
       address = { ...adr, text: address };
     }
   } catch (error) {
-    res.status(404).json({ success: false, error: "Invalid Address" });
+    console.log(error);
+    return res.status(404).json({ success: false, error: "Invalid Address" });
   }
 
   let customer = await Customer.findOne({ email });
