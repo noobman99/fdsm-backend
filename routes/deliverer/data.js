@@ -79,7 +79,7 @@ exports.orderById = async (req, res, next) => {
     return res.status(404).json({ error: "Order not found" });
   }
 
-  if (order.deliverer.toString() !== req.user._id.toString()) {
+  if (order.deliveryBy.toString() !== req.user._id.toString()) {
     return res.status(401).json({ error: "Unauthorized" });
   }
 
@@ -91,7 +91,7 @@ exports.currentOrder = async (req, res, next) => {
   let deliverer = req.user;
 
   let order = await Order.findOne({
-    deliverer: deliverer._id,
+    deliveryBy: deliverer._id,
     isCompleted: false,
   });
 
