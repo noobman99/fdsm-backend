@@ -172,7 +172,7 @@ exports.formatCustomer = async (
     res.phone = customer.phone;
   }
 
-  if (options.showAddress) {
+  if (options.showAddress && customer.address) {
     res.address = customer.address.text;
   }
 

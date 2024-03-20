@@ -22,11 +22,11 @@ const RandomString = (length) => {
 };
 
 exports.signUp = async (req, res, next) => {
-  let name, email, phone, password;
+  let name, email, phone, password, address;
 
   try {
     console.log(req.body);
-    ({ name, email, phone, password } = req.body);
+    ({ name, email, phone, password, address } = req.body);
   } catch (error) {
     res.status(500).json({ success: false, error: "Invalid Request" });
 
@@ -51,6 +51,16 @@ exports.signUp = async (req, res, next) => {
     return;
   }
 
+  try {
+    if (typeof address === "string") {
+      let adr = encodeURIComponent(address);
+      adr = await geoCode(adr);
+      address = { ...adr, text: address };
+    }
+  } catch (error) {
+    res.status(404).json({ success: false, error: "Invalid Address" });
+  }
+
   let customer = await Customer.findOne({ email });
 
   if (customer) {
@@ -69,13 +79,19 @@ exports.signUp = async (req, res, next) => {
   } while (customer);
 
   try {
-    customer = await Customer.create({
+    customer = {
       uid,
       name,
       email,
       phone,
       password: hashedPassword,
-    });
+    };
+
+    if (address) {
+      customer.address = address;
+    }
+
+    customer = await Customer.create(customer);
 
     const token = createToken(customer._id);
 
