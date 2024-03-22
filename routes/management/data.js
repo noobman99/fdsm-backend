@@ -61,12 +61,11 @@ exports.customers = async (req, res, next) => {
 
 exports.customerById = async (req, res, next) => {
   // Customer info route
-  let customer = await Customer.find({ uid: req.params.id });
-
+  let customer = await Customer.findOne({ uid: req.params.id });
   if (!customer) {
     return res.status(404).json({ error: "Customer not found" });
   }
-
+  
   let resJson = await formatCustomer(customer, {
     showAddress: true,
     showPhone: true,
