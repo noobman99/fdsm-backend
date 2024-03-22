@@ -178,7 +178,7 @@ exports.restaurants = async (req, res, next) => {
 
 exports.restaurantById = async (req, res, next) => {
   // Restaurant info route
-  let restaurant = await Restaurant.find({ uid: req.params.id });
+  let restaurant = await Restaurant.findOne({ uid: req.params.id });
 
   if (!restaurant) {
     return res.status(404).json({ error: "Restaurant not found" });

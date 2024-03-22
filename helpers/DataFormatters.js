@@ -223,6 +223,5 @@ exports.formatManagement = (management) => {
     email: management.email,
     uid: management.uid,
     phone: management.phone,
-    address: management.address.text,
   };
 };
