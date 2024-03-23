@@ -16,6 +16,7 @@ router.post("/signup", authEndpoints.signUp);
 // Data routes
 router.get("/info", dataEndpoints.info);
 router.put("/info", dataEndpoints.editInfo);
+router.post("/info/image", dataEndpoints.setImage);
 router.get("/orders", dataEndpoints.orders);
 router.get("/order/:id", dataEndpoints.orderById);
 router.get("/menu", dataEndpoints.menu);

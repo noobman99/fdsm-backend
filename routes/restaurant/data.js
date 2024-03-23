@@ -8,7 +8,9 @@ const {
 const Dish = require("../../models/Dish");
 const { default: mongoose } = require("mongoose");
 const { geoCode } = require("../../helpers/maps");
-const router = express.Router();
+const multer = require("multer");
+const path = require("path");
+const fs = require("fs");
 
 // Routes
 
@@ -78,6 +80,61 @@ exports.editInfo = async (req, res, next) => {
       return res.status(500).json({ error: "Server Error" });
     }
   }
+};
+
+exports.setImage = async (req, res, next) => {
+  // Set restaurant image route
+
+  let restaurant = req.user;
+
+  const directory = "assets/images/" + restaurant.uid;
+
+  if (!fs.existsSync(directory)) {
+    fs.mkdirSync(directory);
+  }
+
+  const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, "assets/images/" + restaurant.uid);
+    },
+    filename: function (req, file, cb) {
+      cb(null, "index" + path.extname(file.originalname));
+    },
+    fileFilter: function (req, file, cb) {
+      if (file.mimetype !== "image/jpeg" && file.mimetype !== "image/png") {
+        console.log(file.mimetype);
+        return cb(new Error("Invalid Image 2"));
+      }
+      cb(null, true);
+    },
+  });
+
+  const upload = multer({ storage: storage }).single("image");
+
+  upload(req, res, async (err) => {
+    if (err) {
+      console.log("here");
+      console.log(err);
+      return res.status(400).json({ error: "Invalid Image" });
+    }
+
+    restaurant.image = req.file.path;
+
+    try {
+      await restaurant.save({
+        validateBeforeSave: true,
+        isNew: false,
+      });
+
+      res.json({ success: true });
+    } catch (error) {
+      if (error.name === "ValidationError") {
+        return res.status(400).json({ error: "Invalid Values" });
+      } else {
+        return res.status(500).json({ error: "Server Error" });
+      }
+    }
+  });
 };
 
 exports.menu = async (req, res, next) => {
