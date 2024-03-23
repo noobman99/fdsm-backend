@@ -26,7 +26,7 @@ exports.formatDish = async (
   }
 
   if (options.showImage) {
-    res.image = dish.image;
+    res.image = "/" + dish.image.replace(/\\/g, "/");
   }
 
   if (options.showPrice) {
@@ -164,7 +164,7 @@ exports.formatRestaurant = async (
   }
 
   if (options.showImage && restaurant.image) {
-    res.image = restaurant.image;
+    res.image = "/" + restaurant.image.replace(/\\/g, "/");
   }
 
   return res;
