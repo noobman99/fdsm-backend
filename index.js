@@ -37,6 +37,10 @@ app.use("/api/restaurant", restaurantApi);
 app.use("/api/deliverer", delivererApi);
 app.use("/api/management", managementApi);
 
+// image route
+app.use("/assets/images", express.static("assets/images"));
+
+// test route
 app.get("/", (req, res) => {
   res.send("Hello, World!");
 });
