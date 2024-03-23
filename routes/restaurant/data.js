@@ -64,6 +64,9 @@ exports.editInfo = async (req, res, next) => {
   if (req.body.tags) {
     restaurant.tags = req.body.tags;
   }
+  if(req.body.image){
+    restaurant.image = req.body.image;
+  }
 
   try {
     await restaurant.save({
