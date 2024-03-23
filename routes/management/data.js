@@ -195,6 +195,7 @@ exports.restaurantById = async (req, res, next) => {
     showAddress: true,
     showReviews: true,
     showImage: true,
+    showAllDishes: true,
   });
 
   res.json(resJson);

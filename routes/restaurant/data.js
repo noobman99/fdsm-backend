@@ -17,7 +17,6 @@ exports.info = async (req, res, next) => {
   let restaurant = req.user;
 
   let resJson = await formatRestaurant(restaurant, {
-    showMenu: true,
     showRating: true,
     showReviews: true,
     showAddress: true,

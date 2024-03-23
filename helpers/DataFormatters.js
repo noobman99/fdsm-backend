@@ -95,6 +95,7 @@ exports.formatRestaurant = async (
     showAddress: false,
     showReviews: false,
     showImage: false,
+    showAllDishes: false,
   }
 ) => {
   let res = {
@@ -131,6 +132,9 @@ exports.formatRestaurant = async (
 
     for (let item of restaurant.menu) {
       let dish = await Dish.findById(item);
+
+      if (!dish.isAvailable && !options.showAllDishes) continue;
+
       if (options.showMenu) {
         dish = await this.formatDish(dish, {
           showAvalability: true,
