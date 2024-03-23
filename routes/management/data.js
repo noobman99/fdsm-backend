@@ -117,7 +117,7 @@ exports.deliverers = async (req, res, next) => {
 
 exports.delivererById = async (req, res, next) => {
   // Delivery agent info route
-  let deliveryAgent = await Deliverer.find({ uid: req.params.id });
+  let deliveryAgent = await Deliverer.findOne({ uid: req.params.id });
 
   if (!deliveryAgent) {
     return res.status(404).json({ error: "Delivery agent not found" });
@@ -130,7 +130,7 @@ exports.delivererById = async (req, res, next) => {
     showLocation: true,
     showReviews: true,
   });
-
+  console.log(resJson);
   res.json(resJson);
 };
 

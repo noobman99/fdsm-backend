@@ -222,7 +222,7 @@ exports.formatDeliverer = async (
     res.email = deliverer.email;
   }
 
-  if (options.showLocation) {
+  if (options.showLocation && res.location) {
     res.location = {
       lat: deliverer.location.lat,
       lon: deliverer.location.lon,
