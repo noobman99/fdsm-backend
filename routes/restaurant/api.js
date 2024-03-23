@@ -24,6 +24,7 @@ router.post("/menu", dataEndpoints.addFoodItem);
 router.get("/menu/:id", dataEndpoints.foodItem);
 router.delete("/menu/:id", dataEndpoints.removeFoodItem);
 router.put("/menu/:id", dataEndpoints.updateFoodItem);
+router.post("/menu/images/:id", dataEndpoints.setFoodItemImage);
 
 router.post("/reviews", dataEndpoints.reviews);
 
