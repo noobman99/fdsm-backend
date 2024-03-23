@@ -160,17 +160,18 @@ exports.restaurants = async (req, res, next) => {
   let resJson = [];
 
   for (let restaurant of restaurants) {
-    resJson.push(
-      await formatRestaurant(restaurant, {
-        showBriefMenu: true,
-        showRating: true,
-        showAddress: true,
-        showPhone: true,
-        showEmail: true,
-        showTags: true,
-        showTimings: true,
-      })
-    );
+    let resto = await formatRestaurant(restaurant, {
+      showBriefMenu: true,
+      showRating: true,
+      showAddress: true,
+      showPhone: true,
+      showEmail: true,
+      showTags: true,
+      showTimings: true,
+    });
+    resto.isFavourite = req.user.favouriteRestaurants.includes(restaurant._id);
+
+    resJson.push(resto);
   }
 
   res.json(resJson);
@@ -193,6 +194,8 @@ exports.restaurantById = async (req, res, next) => {
     showEmail: true,
     showAddress: true,
   });
+
+  resJson.isFavourite = req.user.favouriteRestaurants.includes(restaurant._id);
 
   res.json(resJson);
 };
