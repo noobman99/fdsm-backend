@@ -120,7 +120,10 @@ exports.formatRestaurant = async (
   }
 
   if (options.showTimings) {
-    res.timings = restaurant.timings;
+    res.timings = {
+      open: restaurant.timings.open,
+      close: restaurant.timings.close,
+    };
   }
 
   if (options.showPhone) {
