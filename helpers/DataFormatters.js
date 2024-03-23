@@ -36,7 +36,7 @@ exports.formatDish = async (
   return res;
 };
 
-exports.formatOrder = async (order, options = { showOtp: false }) => {
+exports.formatOrder = async (order, options = { showOtp: false, showRatingStatus: false }) => {
   let customer = await Customer.findById(order.by);
   let restaurant = await Restaurant.findById(order.from);
   let deliverer = await Deliverer.findById(order.deliveryBy);
@@ -77,6 +77,11 @@ exports.formatOrder = async (order, options = { showOtp: false }) => {
   if (options.showOtp && !order.isCompleted) {
     res.otp = order.otp;
     res.etd = order.etd;
+  }
+
+  if(options.showRatingStatus) {
+    res.isRestaurantRated = order.isRestaurantRated;
+    res.isDelivererRated = order.isDelivererRated;
   }
 
   return res;

@@ -68,6 +68,10 @@ const delivererSchema = new mongoose.Schema(
       ],
       default: [],
     },
+    rating: {
+      type: Number,
+      default: 2,
+    },
   },
   { toJSON: { getters: true } }
 );

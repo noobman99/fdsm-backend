@@ -54,6 +54,14 @@ const orderSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    isRestaurantRated: {
+      type: Boolean,
+      default: false,
+    },
+    isDelivererRated: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );

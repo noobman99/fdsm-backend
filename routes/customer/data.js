@@ -80,7 +80,7 @@ exports.orders = async (req, res, next) => {
   let resJson = [];
 
   for (let order of orders) {
-    resJson.push(await formatOrder(order));
+    resJson.push(await formatOrder(order, { showRatingStatus: true }));
   }
 
   res.json(resJson);
@@ -102,7 +102,7 @@ exports.orderById = async (req, res, next) => {
     return res.status(401).json({ error: "Unauthorized" });
   }
 
-  res.json(await formatOrder(order, { showOtp: true }));
+  res.json(await formatOrder(order, { showOtp: true, showRatingStatus: true}));
 };
 
 exports.favouriteRestaurants = async (req, res, next) => {
@@ -319,15 +319,30 @@ exports.newOrder = async (req, res, next) => {
 exports.reviewRestaurant = async (req, res, next) => {
   // Post review route
   let customer = req.user;
+  console.log(req.params.id)
 
-  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-    return res.status(400).json({ error: "Invalid restaurant id" });
+  let restaurant = await Restaurant.findOne({ uid: req.params.id });
+
+  if(!mongoose.Types.ObjectId.isValid(req.body.order)) {
+    return res.status(400).json({ error: "Invalid order id" });
   }
-
-  let restaurant = await Restaurant.findById(req.params.id);
 
   if (!restaurant) {
     return res.status(404).json({ error: "Restaurant not found" });
+  }
+
+  let order = await Order.findById(req.body.order);
+
+  if (!order) {
+    return res.status(404).json({ error: "Order not found" });
+  }
+
+  if (order.from.toString() !== restaurant._id.toString()) {
+    return res.status(400).json({ error: "Invalid restaurant" });
+  }
+
+  if (order.by.toString() !== customer._id.toString()) {
+    return res.status(401).json({ error: "Unauthorized" });
   }
 
   restaurant.rating =
@@ -345,6 +360,13 @@ exports.reviewRestaurant = async (req, res, next) => {
     isNew: false,
   });
 
+  order.isRestaurantRated = true;
+
+  await order.save({
+    validateBeforeSave: true,
+    isNew: false,
+  });
+
   res.json({ success: true });
 };
 
@@ -352,14 +374,28 @@ exports.reviewDeliverer = async (req, res, next) => {
   // Post review route
   let customer = req.user;
 
-  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-    return res.status(400).json({ error: "Invalid deliverer id" });
+  let deliverer = await Deliverer.findOne({ uid: req.params.id });
+
+  if(!mongoose.Types.ObjectId.isValid(req.body.order)) {
+    return res.status(400).json({ error: "Invalid order id" });
   }
 
-  let deliverer = await Deliverer.findById(req.params.id);
+  let order = await Order.findById(req.body.order);
+
+  if (!order) {
+    return res.status(404).json({ error: "Order not found" });
+  }
 
   if (!deliverer) {
     return res.status(404).json({ error: "Deliverer not found" });
+  }
+
+  if (order.deliveryBy.toString() !== deliverer._id.toString()) {
+    return res.status(400).json({ error: "Invalid deliverer" });
+  }
+
+  if (order.by.toString() !== customer._id.toString()) {
+    return res.status(401).json({ error: "Unauthorized" });
   }
 
   deliverer.rating =
@@ -373,6 +409,13 @@ exports.reviewDeliverer = async (req, res, next) => {
   });
 
   await deliverer.save({
+    validateBeforeSave: true,
+    isNew: false,
+  });
+
+  order.isDelivererRated = true;
+
+  await order.save({
     validateBeforeSave: true,
     isNew: false,
   });

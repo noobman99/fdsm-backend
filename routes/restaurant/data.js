@@ -131,6 +131,7 @@ exports.setImage = async (req, res, next) => {
 
       res.json({ success: true });
     } catch (error) {
+      console.log("error", error)
       if (error.name === "ValidationError") {
         return res.status(400).json({ error: "Invalid Values" });
       } else {
