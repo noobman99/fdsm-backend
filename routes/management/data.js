@@ -169,6 +169,7 @@ exports.restaurants = async (req, res, next) => {
         showEmail: true,
         showTags: true,
         showTimings: true,
+        showImage: true,
       })
     );
   }
@@ -193,6 +194,7 @@ exports.restaurantById = async (req, res, next) => {
     showEmail: true,
     showAddress: true,
     showReviews: true,
+    showImage: true,
   });
 
   res.json(resJson);

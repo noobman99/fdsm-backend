@@ -25,6 +25,7 @@ exports.info = async (req, res, next) => {
     showEmail: true,
     showTimings: true,
     showTags: true,
+    showImage: true,
   });
 
   res.json(resJson);
@@ -145,7 +146,7 @@ exports.addFoodItem = async (req, res, next) => {
   // Add food item route
   let restaurant = req.user;
 
-  if (!req.body.name || !req.body.image || !req.body.price) {
+  if (!req.body.name /*|| !req.body.image*/ || !req.body.price) {
     return res.status(400).json({ error: "Invalid Values" });
   }
 

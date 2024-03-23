@@ -52,16 +52,21 @@ const delivererSchema = new mongoose.Schema(
       },
     },
     reviews: {
-      poster: {
-        type: [mongoose.Schema.Types.ObjectId],
-        ref: "Customer",
-      },
-      review: {
-        type: String,
-      },
-      rating: {
-        type: Number,
-      },
+      type: [
+        {
+          poster: {
+            type: [mongoose.Schema.Types.ObjectId],
+            ref: "Customer",
+          },
+          review: {
+            type: String,
+          },
+          rating: {
+            type: Number,
+          },
+        },
+      ],
+      default: [],
     },
   },
   { toJSON: { getters: true } }

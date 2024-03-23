@@ -123,6 +123,7 @@ exports.favouriteRestaurants = async (req, res, next) => {
         showAddress: true,
         showTags: true,
         showTimings: true,
+        showImage: true,
       })
     );
   }
@@ -168,6 +169,7 @@ exports.restaurants = async (req, res, next) => {
       showEmail: true,
       showTags: true,
       showTimings: true,
+      showImage: true,
     });
     resto.isFavourite = req.user.favouriteRestaurants.includes(restaurant._id);
 
@@ -194,6 +196,7 @@ exports.restaurantById = async (req, res, next) => {
     showEmail: true,
     showAddress: true,
     showReviews: true,
+    showImage: true,
   });
 
   resJson.isFavourite = req.user.favouriteRestaurants.includes(restaurant._id);

@@ -23,10 +23,11 @@ const RandomString = (length) => {
 };
 
 exports.signUp = async (req, res, next) => {
-  let name, email, phone, password, address, timings, tags;
+  let name, email, phone, password, address, timings, tags, image;
 
   try {
-    ({ name, email, phone, password, address, timings, tags } = req.body);
+    ({ name, email, phone, password, address, timings, tags, image } =
+      req.body);
   } catch (error) {
     return res.status(500).json({ success: false, error: "Invalid Request" });
   }
@@ -73,7 +74,7 @@ exports.signUp = async (req, res, next) => {
   } while (restaurant);
 
   try {
-    restaurant = await Restaurant.create({
+    restaurant = {
       uid,
       name,
       email,
@@ -82,7 +83,13 @@ exports.signUp = async (req, res, next) => {
       address,
       timings,
       tags,
-    });
+    };
+
+    if (image) {
+      restaurant.image = image;
+    }
+
+    restaurant = await Restaurant.create(restaurant);
 
     const token = createToken(restaurant._id);
 

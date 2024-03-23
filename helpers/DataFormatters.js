@@ -94,6 +94,7 @@ exports.formatRestaurant = async (
     showEmail: false,
     showAddress: false,
     showReviews: false,
+    showImage: false,
   }
 ) => {
   let res = {
@@ -146,14 +147,20 @@ exports.formatRestaurant = async (
   if (options.showReviews) {
     res.reviews = [];
 
-    for (let review of restaurant.reviews) {
-      let poster = await Customer.findById(review.poster);
-      res.reviews.push({
-        poster: { name: poster.name, uid: poster.uid },
-        rating: review.rating,
-        comment: review.review,
-      });
+    if (restaurant.reviews) {
+      for (let review of restaurant.reviews) {
+        let poster = await Customer.findById(review.poster);
+        res.reviews.push({
+          poster: { name: poster.name, uid: poster.uid },
+          rating: review.rating,
+          comment: review.review,
+        });
+      }
     }
+  }
+
+  if (options.showImage && restaurant.image) {
+    res.image = restaurant.image;
   }
 
   return res;
@@ -177,7 +184,12 @@ exports.formatCustomer = async (
     let favs = await Restaurant.find({
       _id: { $in: customer.favouriteRestaurants },
     });
-    res.favouriteRestaurants = favs.map((fav) => this.formatRestaurant(fav));
+
+    res.favouriteRestaurants = [];
+
+    for (let fav of favs) {
+      res.favouriteRestaurants.push(await this.formatRestaurant(fav));
+    }
   }
 
   if (options.showEmail) {
@@ -231,14 +243,15 @@ exports.formatDeliverer = async (
 
   if (options.showReviews) {
     res.reviews = [];
-
-    for (let review of deliverer.reviews) {
-      let poster = await Customer.findById(review.poster);
-      res.reviews.push({
-        poster: { name: poster.name, uid: poster.uid },
-        rating: review.rating,
-        comment: review.review,
-      });
+    if (deliverer.reviews) {
+      for (let review of deliverer.reviews) {
+        let poster = await Customer.findById(review.poster);
+        res.reviews.push({
+          poster: { name: poster.name, uid: poster.uid },
+          rating: review.rating,
+          comment: review.review,
+        });
+      }
     }
   }
 

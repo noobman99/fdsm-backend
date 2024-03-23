@@ -24,6 +24,10 @@ const restaurantSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    image: {
+      type: String,
+      default: "",
+    },
     address: {
       type: {
         lat: {
@@ -63,16 +67,21 @@ const restaurantSchema = new mongoose.Schema(
       default: [],
     },
     reviews: {
-      poster: {
-        type: [mongoose.Schema.Types.ObjectId],
-        ref: "Customer",
-      },
-      review: {
-        type: String,
-      },
-      rating: {
-        type: Number,
-      },
+      type: [
+        {
+          poster: {
+            type: [mongoose.Schema.Types.ObjectId],
+            ref: "Customer",
+          },
+          review: {
+            type: String,
+          },
+          rating: {
+            type: Number,
+          },
+        },
+      ],
+      default: [],
     },
     menu: {
       type: [mongoose.Schema.Types.ObjectId],
