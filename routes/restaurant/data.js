@@ -8,7 +8,9 @@ const {
 const Dish = require("../../models/Dish");
 const { default: mongoose } = require("mongoose");
 const { geoCode } = require("../../helpers/maps");
-const router = express.Router();
+const multer = require("multer");
+const path = require("path");
+const fs = require("fs");
 
 // Routes
 
@@ -17,7 +19,6 @@ exports.info = async (req, res, next) => {
   let restaurant = req.user;
 
   let resJson = await formatRestaurant(restaurant, {
-    showMenu: true,
     showRating: true,
     showReviews: true,
     showAddress: true,
@@ -82,6 +83,61 @@ exports.editInfo = async (req, res, next) => {
       return res.status(500).json({ error: "Server Error" });
     }
   }
+};
+
+exports.setImage = async (req, res, next) => {
+  // Set restaurant image route
+
+  let restaurant = req.user;
+
+  const directory = "assets/images/" + restaurant.uid;
+
+  if (!fs.existsSync(directory)) {
+    fs.mkdirSync(directory);
+  }
+
+  const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, "assets/images/" + restaurant.uid);
+    },
+    filename: function (req, file, cb) {
+      cb(null, "index" + path.extname(file.originalname));
+    },
+    fileFilter: function (req, file, cb) {
+      if (file.mimetype !== "image/jpeg" && file.mimetype !== "image/png") {
+        console.log(file.mimetype);
+        return cb(new Error("Invalid Image 2"));
+      }
+      cb(null, true);
+    },
+  });
+
+  const upload = multer({ storage: storage }).single("image");
+
+  upload(req, res, async (err) => {
+    if (err) {
+      console.log("here");
+      console.log(err);
+      return res.status(400).json({ error: "Invalid Image" });
+    }
+
+    restaurant.image = req.file.path;
+
+    try {
+      await restaurant.save({
+        validateBeforeSave: true,
+        isNew: false,
+      });
+
+      res.json({ success: true });
+    } catch (error) {
+      if (error.name === "ValidationError") {
+        return res.status(400).json({ error: "Invalid Values" });
+      } else {
+        return res.status(500).json({ error: "Server Error" });
+      }
+    }
+  });
 };
 
 exports.menu = async (req, res, next) => {
@@ -164,7 +220,7 @@ exports.addFoodItem = async (req, res, next) => {
 
   dish = {
     name: req.body.name,
-    image: req.body.image,
+    image: "",
     restaurant: restaurant._id,
     price: req.body.price,
   };
@@ -230,9 +286,6 @@ exports.updateFoodItem = async (req, res, next) => {
   if (req.body.name) {
     dish.name = req.body.name;
   }
-  if (req.body.image) {
-    dish.image = req.body.image;
-  }
   if (req.body.price) {
     dish.price = req.body.price;
   }
@@ -273,6 +326,72 @@ exports.foodItem = async (req, res, next) => {
       showPrice: true,
     })
   );
+};
+
+exports.setFoodItemImage = async (req, res, next) => {
+  // Update food item image route
+  let restaurant = req.user;
+
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    return res.status(400).json({ error: "Invalid dish id" });
+  }
+
+  let dish = await Dish.findOne({
+    restaurant: restaurant._id,
+    _id: req.params.id,
+  });
+
+  if (!dish) {
+    return res.status(400).json({ error: "Food item not found." });
+  }
+
+  const directory = "assets/images/" + restaurant.uid;
+
+  if (!fs.existsSync(directory)) {
+    fs.mkdirSync(directory);
+  }
+
+  const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, "assets/images/" + restaurant.uid);
+    },
+    filename: function (req, file, cb) {
+      cb(null, dish.id + path.extname(file.originalname));
+    },
+    fileFilter: function (req, file, cb) {
+      if (file.mimetype !== "image/jpeg" && file.mimetype !== "image/png") {
+        console.log(file.mimetype);
+        return cb(new Error("Invalid Image"));
+      }
+      cb(null, true);
+    },
+  });
+
+  const upload = multer({ storage: storage }).single("image");
+
+  upload(req, res, async (err) => {
+    if (err) {
+      console.log(err);
+      return res.status(400).json({ error: "Invalid Image" });
+    }
+
+    dish.image = req.file.path;
+
+    try {
+      await dish.save({
+        validateBeforeSave: true,
+        isNew: false,
+      });
+
+      res.json({ success: true });
+    } catch (error) {
+      if (error.name === "ValidationError") {
+        return res.status(400).json({ error: "Invalid Values" });
+      } else {
+        return res.status(500).json({ error: "Server Error" });
+      }
+    }
+  });
 };
 
 exports.reviews = async (req, res, next) => {

@@ -46,6 +46,19 @@ exports.signUp = async (req, res, next) => {
       .json({ success: false, error: "Invalid phone number" });
   }
 
+  try {
+    if (
+      timings.open < 0 ||
+      timings.close < 0 ||
+      timings.open > 24 ||
+      timings.close > 24
+    ) {
+      return res.status(400).json({ success: false, error: "Invalid timings" });
+    }
+  } catch (error) {
+    return res.status(400).json({ success: false, error: "Invalid timings" });
+  }
+
   if (typeof address === "string") {
     let adr = encodeURIComponent(address);
     try {

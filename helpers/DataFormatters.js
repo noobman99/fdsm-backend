@@ -26,7 +26,7 @@ exports.formatDish = async (
   }
 
   if (options.showImage) {
-    res.image = dish.image;
+    res.image = "/" + dish.image.replace(/\\/g, "/");
   }
 
   if (options.showPrice) {
@@ -95,6 +95,7 @@ exports.formatRestaurant = async (
     showAddress: false,
     showReviews: false,
     showImage: false,
+    showAllDishes: false,
   }
 ) => {
   let res = {
@@ -131,6 +132,9 @@ exports.formatRestaurant = async (
 
     for (let item of restaurant.menu) {
       let dish = await Dish.findById(item);
+
+      if (!dish.isAvailable && !options.showAllDishes) continue;
+
       if (options.showMenu) {
         dish = await this.formatDish(dish, {
           showAvalability: true,
@@ -160,7 +164,7 @@ exports.formatRestaurant = async (
   }
 
   if (options.showImage && restaurant.image) {
-    res.image = restaurant.image;
+    res.image = "/" + restaurant.image.replace(/\\/g, "/");
   }
 
   return res;
