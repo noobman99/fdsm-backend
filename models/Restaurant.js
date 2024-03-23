@@ -56,7 +56,7 @@ const restaurantSchema = new mongoose.Schema(
     },
     rating: {
       type: Number,
-      default: 0,
+      default: 2,
     },
     tags: {
       type: [String],

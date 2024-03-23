@@ -18,6 +18,7 @@ exports.info = async (req, res, next) => {
 
   let resJson = await formatRestaurant(restaurant, {
     showMenu: true,
+    showRating: true,
     showReviews: true,
     showAddress: true,
     showPhone: true,

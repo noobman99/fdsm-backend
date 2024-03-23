@@ -61,7 +61,7 @@ exports.formatOrder = async (order, options = { showOtp: false }) => {
       showPhone: true,
       showAddress: true,
     }),
-    deliverer: this.formatDeliverer(deliverer, {
+    deliverer: await this.formatDeliverer(deliverer, {
       showPhone: true,
       showLocation: true,
     }),
@@ -93,6 +93,7 @@ exports.formatRestaurant = async (
     showPhone: false,
     showEmail: false,
     showAddress: false,
+    showReviews: false,
   }
 ) => {
   let res = {
@@ -142,6 +143,19 @@ exports.formatRestaurant = async (
     }
   }
 
+  if (options.showReviews) {
+    res.reviews = [];
+
+    for (let review of restaurant.reviews) {
+      let poster = await Customer.findById(review.poster);
+      res.reviews.push({
+        poster: { name: poster.name, uid: poster.uid },
+        rating: review.rating,
+        comment: review.review,
+      });
+    }
+  }
+
   return res;
 };
 
@@ -181,13 +195,14 @@ exports.formatCustomer = async (
   return res;
 };
 
-exports.formatDeliverer = (
+exports.formatDeliverer = async (
   deliverer,
   options = {
     showWorkingStatus: false,
     showPhone: false,
     showEmail: false,
     showLocation: false,
+    showReviews: false,
   }
 ) => {
   let res = {
@@ -212,6 +227,19 @@ exports.formatDeliverer = (
       lat: deliverer.location.lat,
       lon: deliverer.location.lon,
     };
+  }
+
+  if (options.showReviews) {
+    res.reviews = [];
+
+    for (let review of deliverer.reviews) {
+      let poster = await Customer.findById(review.poster);
+      res.reviews.push({
+        poster: { name: poster.name, uid: poster.uid },
+        rating: review.rating,
+        comment: review.review,
+      });
+    }
   }
 
   return res;

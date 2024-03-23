@@ -65,7 +65,7 @@ exports.customerById = async (req, res, next) => {
   if (!customer) {
     return res.status(404).json({ error: "Customer not found" });
   }
-  
+
   let resJson = await formatCustomer(customer, {
     showAddress: true,
     showPhone: true,
@@ -104,7 +104,7 @@ exports.deliverers = async (req, res, next) => {
 
   for (let deliveryAgent of deliveryAgents) {
     resJson.push(
-      formatDeliverer(deliveryAgent, {
+      await formatDeliverer(deliveryAgent, {
         showWorkingStatus: true,
         showPhone: true,
         showEmail: true,
@@ -123,11 +123,12 @@ exports.delivererById = async (req, res, next) => {
     return res.status(404).json({ error: "Delivery agent not found" });
   }
 
-  let resJson = formatDeliverer(deliveryAgent, {
+  let resJson = await formatDeliverer(deliveryAgent, {
     showWorkingStatus: true,
     showPhone: true,
     showEmail: true,
     showLocation: true,
+    showReviews: true,
   });
 
   res.json(resJson);
@@ -191,6 +192,7 @@ exports.restaurantById = async (req, res, next) => {
     showPhone: true,
     showEmail: true,
     showAddress: true,
+    showReviews: true,
   });
 
   res.json(resJson);

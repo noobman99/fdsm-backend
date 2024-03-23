@@ -193,6 +193,7 @@ exports.restaurantById = async (req, res, next) => {
     showPhone: true,
     showEmail: true,
     showAddress: true,
+    showReviews: true,
   });
 
   resJson.isFavourite = req.user.favouriteRestaurants.includes(restaurant._id);
