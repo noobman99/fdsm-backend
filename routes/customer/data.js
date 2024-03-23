@@ -102,7 +102,7 @@ exports.orderById = async (req, res, next) => {
     return res.status(401).json({ error: "Unauthorized" });
   }
 
-  res.json(await formatOrder(order, { showOtp: true, showRatingStatus: true}));
+  res.json(await formatOrder(order, { showOtp: true, showRatingStatus: true }));
 };
 
 exports.favouriteRestaurants = async (req, res, next) => {
@@ -319,11 +319,11 @@ exports.newOrder = async (req, res, next) => {
 exports.reviewRestaurant = async (req, res, next) => {
   // Post review route
   let customer = req.user;
-  console.log(req.params.id)
+  console.log(req.params.id);
 
   let restaurant = await Restaurant.findOne({ uid: req.params.id });
 
-  if(!mongoose.Types.ObjectId.isValid(req.body.order)) {
+  if (!mongoose.Types.ObjectId.isValid(req.body.order)) {
     return res.status(400).json({ error: "Invalid order id" });
   }
 
@@ -345,9 +345,10 @@ exports.reviewRestaurant = async (req, res, next) => {
     return res.status(401).json({ error: "Unauthorized" });
   }
 
-  restaurant.rating =
+  restaurant.rating = Math.round(
     (restaurant.rating * restaurant.reviews.length + req.body.rating) /
-    (restaurant.reviews.length + 1);
+      (restaurant.reviews.length + 1)
+  );
 
   restaurant.reviews.push({
     poster: customer._id,
@@ -376,7 +377,7 @@ exports.reviewDeliverer = async (req, res, next) => {
 
   let deliverer = await Deliverer.findOne({ uid: req.params.id });
 
-  if(!mongoose.Types.ObjectId.isValid(req.body.order)) {
+  if (!mongoose.Types.ObjectId.isValid(req.body.order)) {
     return res.status(400).json({ error: "Invalid order id" });
   }
 
@@ -398,9 +399,10 @@ exports.reviewDeliverer = async (req, res, next) => {
     return res.status(401).json({ error: "Unauthorized" });
   }
 
-  deliverer.rating =
+  deliverer.rating = Math.round(
     (deliverer.rating * deliverer.reviews.length + req.body.rating) /
-    (deliverer.reviews.length + 1);
+      (deliverer.reviews.length + 1)
+  );
 
   deliverer.reviews.push({
     poster: customer._id,
