@@ -36,7 +36,10 @@ exports.formatDish = async (
   return res;
 };
 
-exports.formatOrder = async (order, options = { showOtp: false, showRatingStatus: false }) => {
+exports.formatOrder = async (
+  order,
+  options = { showOtp: false, showRatingStatus: false }
+) => {
   let customer = await Customer.findById(order.by);
   let restaurant = await Restaurant.findById(order.from);
   let deliverer = await Deliverer.findById(order.deliveryBy);
@@ -79,7 +82,7 @@ exports.formatOrder = async (order, options = { showOtp: false, showRatingStatus
     res.etd = order.etd;
   }
 
-  if(options.showRatingStatus) {
+  if (options.showRatingStatus) {
     res.isRestaurantRated = order.isRestaurantRated;
     res.isDelivererRated = order.isDelivererRated;
   }
@@ -224,6 +227,7 @@ exports.formatDeliverer = async (
     showEmail: false,
     showLocation: false,
     showReviews: false,
+    showRating: false,
   }
 ) => {
   let res = {
@@ -262,6 +266,10 @@ exports.formatDeliverer = async (
         });
       }
     }
+  }
+
+  if (options.showRating && deliverer.rating) {
+    res.rating = deliverer.rating;
   }
 
   return res;

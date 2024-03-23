@@ -129,6 +129,7 @@ exports.delivererById = async (req, res, next) => {
     showEmail: true,
     showLocation: true,
     showReviews: true,
+    showRating: true,
   });
   console.log(resJson);
   res.json(resJson);
