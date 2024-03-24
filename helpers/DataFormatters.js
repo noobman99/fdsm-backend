@@ -59,7 +59,9 @@ exports.formatOrder = async (
   }
 
   let res = {
-    customer: await this.formatCustomer(customer),
+    customer: await this.formatCustomer(customer, {
+      showLocation: true,
+    }),
     restaurant: await this.formatRestaurant(restaurant, {
       showPhone: true,
       showAddress: true,
@@ -188,6 +190,7 @@ exports.formatCustomer = async (
     showEmail: false,
     showPhone: false,
     showAddress: false,
+    showLocation: false,
   }
 ) => {
   let res = {
@@ -217,6 +220,13 @@ exports.formatCustomer = async (
 
   if (options.showAddress && customer.address) {
     res.address = customer.address.text;
+  }
+
+  if (options.showLocation && customer.address.lat && customer.address.lon) {
+    res.location = {
+      lat: customer.address.lat,
+      lon: customer.address.lon,
+    };
   }
 
   return res;
@@ -250,7 +260,7 @@ exports.formatDeliverer = async (
     res.email = deliverer.email;
   }
 
-  if (options.showLocation && res.location) {
+  if (options.showLocation && deliverer.location) {
     res.location = {
       lat: deliverer.location.lat,
       lon: deliverer.location.lon,
