@@ -489,3 +489,19 @@ exports.reviewDeliverer = async (req, res, next) => {
 
   res.json({ success: true });
 };
+
+exports.offers = async (req, res, next) => {
+  // All offers route
+  let offers = await Offer.find({ customers: { $ne: req.user._id } });
+
+  let resJson = [];
+
+  for (let offer of offers) {
+    resJson.push({
+      code: offer.code,
+      discount: offer.discount,
+    });
+  }
+
+  res.json(resJson);
+};
