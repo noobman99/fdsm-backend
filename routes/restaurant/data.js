@@ -223,7 +223,7 @@ exports.addFoodItem = async (req, res, next) => {
     name: req.body.name,
     image: "",
     restaurant: restaurant._id,
-    price: req.body.price,
+    price: Math.round(req.body.price),
   };
 
   dish = await Dish.create(dish);
@@ -288,7 +288,7 @@ exports.updateFoodItem = async (req, res, next) => {
     dish.name = req.body.name;
   }
   if (req.body.price) {
-    dish.price = req.body.price;
+    dish.price = Math.round(req.body.price);
   }
   if (req.body.isAvailable) {
     dish.isAvailable = req.body.isAvailable;
