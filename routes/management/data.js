@@ -10,6 +10,7 @@ const {
   formatDeliverer,
   formatRestaurant,
 } = require("../../helpers/DataFormatters");
+const Offer = require("../../models/Offer");
 
 const router = express.Router();
 
@@ -238,4 +239,67 @@ exports.ordersByRestaurant = async (req, res, next) => {
   }
 
   res.json(resJson);
+};
+
+exports.offers = async (req, res, next) => {
+  // All offers route
+  let offers = await Offer.find({});
+
+  let resJson = [];
+
+  for (let offer of offers) {
+    resJson.push({
+      code: offer.code,
+      discount: offer.discount,
+      customers: offer.customers.length,
+    });
+  }
+
+  res.json(resJson);
+};
+
+exports.createOffer = async (req, res, next) => {
+  // Create offer route
+  let offer = new Offer({
+    code: req.body.code,
+    discount: req.body.discount,
+  });
+
+  try {
+    await offer.save({
+      validateBeforeSave: true,
+      isNew: true,
+    });
+  } catch (err) {
+    if (err.name === "ValidationError") {
+      return res.status(400).json({ error: "Not unique offer code!" });
+    } else {
+      console.error(err);
+      return res
+        .status(400)
+        .json({ error: "Cannot process your request at the time" });
+    }
+  }
+
+  res.json({ success: true });
+};
+
+exports.deleteOffer = async (req, res, next) => {
+  // Delete offer route
+  let offer = await Offer.findOne({ code: req.params.id });
+
+  if (!offer) {
+    return res.status(404).json({ error: "Offer not found" });
+  }
+
+  try {
+    await offer.deleteOne();
+  } catch (err) {
+    console.error(err);
+    return res
+      .status(400)
+      .json({ error: "Cannot process your request at the time" });
+  }
+
+  res.json({ success: true });
 };
