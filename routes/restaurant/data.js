@@ -112,7 +112,7 @@ exports.setImage = async (req, res, next) => {
     },
   });
 
-  const upload = multer({ storage: storage }).single("image");
+  const upload = multer({ storage: storage }).array("image");
 
   upload(req, res, async (err) => {
     if (err) {
@@ -121,7 +121,7 @@ exports.setImage = async (req, res, next) => {
       return res.status(400).json({ error: "Invalid Image" });
     }
 
-    restaurant.image = req.file.path;
+    restaurant.image = req.files[0].path;
 
     try {
       await restaurant.save({
@@ -369,7 +369,7 @@ exports.setFoodItemImage = async (req, res, next) => {
     },
   });
 
-  const upload = multer({ storage: storage }).single("image");
+  const upload = multer({ storage: storage }).array("image", 1);
 
   upload(req, res, async (err) => {
     if (err) {
@@ -377,7 +377,8 @@ exports.setFoodItemImage = async (req, res, next) => {
       return res.status(400).json({ error: "Invalid Image" });
     }
 
-    // dish.image = req.file.path;
+    // console.log(req.files);
+    dish.image = req.files[0].path;
 
     try {
       await dish.save({
