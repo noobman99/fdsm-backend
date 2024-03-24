@@ -235,7 +235,7 @@ exports.addFoodItem = async (req, res, next) => {
     isNew: false,
   });
 
-  res.json({ message: "Food item added successfully" });
+  res.json({ message: "Food item added successfully", uid: dish._id});
 };
 
 exports.removeFoodItem = async (req, res, next) => {
@@ -332,6 +332,7 @@ exports.foodItem = async (req, res, next) => {
 exports.setFoodItemImage = async (req, res, next) => {
   // Update food item image route
   let restaurant = req.user;
+  console.log(req.file)
 
   if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
     return res.status(400).json({ error: "Invalid dish id" });
@@ -376,7 +377,7 @@ exports.setFoodItemImage = async (req, res, next) => {
       return res.status(400).json({ error: "Invalid Image" });
     }
 
-    dish.image = req.file.path;
+    // dish.image = req.file.path;
 
     try {
       await dish.save({
