@@ -13,6 +13,7 @@ const Order = require("../../models/Order");
 const mongoose = require("mongoose");
 const Dish = require("../../models/Dish");
 const Deliverer = require("../../models/Deliverer");
+const Offer = require("../../models/Offer");
 
 // Routes
 
@@ -330,6 +331,27 @@ exports.newOrder = async (req, res, next) => {
     });
   }
 
+  if (req.body.offerCode) {
+    let offer = await Offer.findOne({ code: req.body.offerCode });
+
+    if (!offer) {
+      return res.status(404).json({ error: "Offer not found" });
+    }
+
+    if (offer.customers.includes(customer._id)) {
+      return res.status(400).json({ error: "Offer already used" });
+    }
+
+    total = total - (total * offer.discount) / 100;
+
+    offer.customers.push(customer._id);
+
+    await offer.save({
+      validateBeforeSave: true,
+      isNew: false,
+    });
+  }
+
   let order = {
     by: customer._id,
     from: restaurant._id,
@@ -343,7 +365,12 @@ exports.newOrder = async (req, res, next) => {
     isCompleted: false,
   };
 
+  if (req.body.offerCode) {
+    order.offerCode = req.body.offerCode;
+  }
+
   order = await Order.create(order);
+
   deliveryAgent.workingStatus = 2;
 
   await deliveryAgent.save({

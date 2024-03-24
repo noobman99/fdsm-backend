@@ -81,6 +81,9 @@ const orderSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    offerCode: {
+      type: String,
+    },
   },
   { timestamps: true }
 );

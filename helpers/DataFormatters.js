@@ -94,6 +94,10 @@ exports.formatOrder = async (
     res.isDelivererRated = order.isDelivererRated;
   }
 
+  if (order.offer) {
+    res.offerCode = order.offerCode;
+  }
+
   return res;
 };
 
