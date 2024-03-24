@@ -384,7 +384,7 @@ exports.reviewRestaurant = async (req, res, next) => {
   }
 
   restaurant.rating = Math.round(
-    (restaurant.rating * restaurant.reviews.length + req.body.rating) /
+    (restaurant.rating * restaurant.reviews.length + Number(req.body.rating)) /
       (restaurant.reviews.length + 1)
   );
 
@@ -438,7 +438,7 @@ exports.reviewDeliverer = async (req, res, next) => {
   }
 
   deliverer.rating = Math.round(
-    (deliverer.rating * deliverer.reviews.length + req.body.rating) /
+    (deliverer.rating * deliverer.reviews.length + Number(req.body.rating)) /
       (deliverer.reviews.length + 1)
   );
 
