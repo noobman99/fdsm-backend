@@ -259,6 +259,8 @@ exports.newOrder = async (req, res, next) => {
       restaurant.address,
       deliveryAddress
     ));
+
+    deliveryAddress.text = req.body.deliveryAddress;
   } catch (error) {
     return res.status(404).json({
       error: `Cannot Deliver from ${restaurant.name} to your address.`,
@@ -296,7 +298,7 @@ exports.newOrder = async (req, res, next) => {
     by: customer._id,
     from: restaurant._id,
     deliveryBy: deliveryAgent._id,
-    deliveryAddress: req.body.deliveryAddress,
+    deliveryAddress,
     otp,
     items,
     total,

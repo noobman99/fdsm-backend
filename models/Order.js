@@ -30,7 +30,26 @@ const orderSchema = new mongoose.Schema(
       required: true,
     },
     deliveryAddress: {
-      type: String,
+      type: {
+        lat: {
+          type: mongoose.Types.Decimal128,
+          required: true,
+          get: (v) => {
+            return parseFloat(v);
+          },
+        },
+        lon: {
+          type: mongoose.Types.Decimal128,
+          required: true,
+          get: (v) => {
+            return parseFloat(v);
+          },
+        },
+        text: {
+          type: String,
+          required: true,
+        },
+      },
       required: true,
     },
     otp: {

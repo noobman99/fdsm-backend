@@ -70,7 +70,11 @@ exports.formatOrder = async (
       showPhone: true,
       showLocation: true,
     }),
-    deliveryAddress: order.deliveryAddress,
+    deliveryAddress: {
+      lat: order.deliveryAddress.lat,
+      lon: order.deliveryAddress.lon,
+      text: order.deliveryAddress.text,
+    },
     items,
     total: order.total,
     isPaid: order.isPaid,
