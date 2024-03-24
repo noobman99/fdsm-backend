@@ -2,6 +2,7 @@ const Customer = require("../models/Customer");
 const Restaurant = require("../models/Restaurant");
 const Deliverer = require("../models/Deliverer");
 const Dish = require("../models/Dish");
+const Order = require("../models/Order");
 
 exports.formatDish = async (
   dish,
@@ -245,6 +246,7 @@ exports.formatDeliverer = async (
     showLocation: false,
     showReviews: false,
     showRating: false,
+    showPendingMoney: false,
   }
 ) => {
   let res = {
@@ -287,6 +289,19 @@ exports.formatDeliverer = async (
 
   if (options.showRating && deliverer.rating) {
     res.rating = deliverer.rating;
+  }
+
+  if (options.showPendingMoney) {
+    const orders = await Order.find({
+      deliveryBy: deliverer._id,
+      isPaid: 2,
+    });
+
+    res.pendingMoney = 0;
+
+    for (let order of orders) {
+      res.pendingMoney += order.total;
+    }
   }
 
   return res;

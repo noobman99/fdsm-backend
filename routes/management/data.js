@@ -130,6 +130,7 @@ exports.delivererById = async (req, res, next) => {
     showLocation: true,
     showReviews: true,
     showRating: true,
+    showPendingMoney: true,
   });
   console.log(resJson);
   res.json(resJson);
@@ -152,6 +153,24 @@ exports.ordersByDeliverer = async (req, res, next) => {
   }
 
   res.json(resJson);
+};
+
+exports.markPaid = async (req, res, next) => {
+  // Mark delivery agent paid route
+  let deliveryAgent = await Deliverer.findOne({ uid: req.params.id });
+
+  if (!deliveryAgent) {
+    return res.status(404).json({ error: "Delivery agent not found" });
+  }
+
+  let orders = await Order.find({ deliveryBy: deliveryAgent, isPaid: 2 });
+
+  for (let order of orders) {
+    order.isPaid = 1;
+    await order.save({ isNew: false });
+  }
+
+  res.json({ success: true });
 };
 
 exports.restaurants = async (req, res, next) => {
