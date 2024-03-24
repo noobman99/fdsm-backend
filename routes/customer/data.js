@@ -154,6 +154,32 @@ exports.newFavouriteRestaurant = async (req, res, next) => {
   res.json({ success: true });
 };
 
+exports.removeFavouriteRestaurant = async (req, res, next) => {
+  // Remove favourite restaurant route
+  let customer = req.user;
+
+  let restaurant = await Restaurant.findOne({ uid: req.params.id }, "_id");
+
+  if (!restaurant) {
+    return res.status(404).json({ error: "Restaurant not found" });
+  }
+
+  if (!customer.favouriteRestaurants.includes(restaurant._id)) {
+    return res.status(400).json({ error: "Restaurant not in favourites" });
+  }
+
+  customer.favouriteRestaurants = customer.favouriteRestaurants.filter(
+    (id) => id.toString() !== restaurant._id.toString()
+  );
+
+  await customer.save({
+    validateBeforeSave: true,
+    isNew: false,
+  });
+
+  res.json({ success: true });
+};
+
 exports.restaurants = async (req, res, next) => {
   // All restaurants route
   let restaurants = await Restaurant.find({});

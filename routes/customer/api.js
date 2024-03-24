@@ -21,6 +21,10 @@ router.post("/order", dataEndpoints.newOrder);
 router.get("/order/:id", dataEndpoints.orderById);
 router.get("/favouriterestaurants", dataEndpoints.favouriteRestaurants);
 router.post("/favouriterestaurant/:id", dataEndpoints.newFavouriteRestaurant);
+router.delete(
+  "/favouriterestaurant/:id",
+  dataEndpoints.removeFavouriteRestaurant
+);
 router.get("/restaurants", dataEndpoints.restaurants);
 router.get("/restaurant/:id", dataEndpoints.restaurantById);
 router.post("/reviews/restaurant/:id", dataEndpoints.reviewRestaurant);
