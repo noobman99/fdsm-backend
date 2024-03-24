@@ -208,7 +208,7 @@ exports.newOrder = async (req, res, next) => {
   // New order route
   let customer = req.user;
 
-  console.log(req.body);
+  // console.log(req.body);
 
   // Validation
   if (!req.body.restaurant) {
@@ -234,10 +234,17 @@ exports.newOrder = async (req, res, next) => {
       restaurant.address
     ));
   } catch (error) {
-    return res.status(404).json({
-      error:
-        "We are unable to place an order at the moment. Please try again later",
-    });
+    if (error.name === "NoDelivererError") {
+      return res.status(404).json({
+        error:
+          "We are unable to place an order at the moment. Please try again later",
+      });
+    } else {
+      return res.status(500).json({
+        error:
+          "Cannot deliver to your location from given restaurant right now.",
+      });
+    }
   }
 
   // Find delivery time
@@ -268,7 +275,10 @@ exports.newOrder = async (req, res, next) => {
   }
 
   const max = (a, b) => (a > b ? a : b);
-  const etd = new Date(Date.now() + max(timefororder, 600) + timeToDel + 600); // Estimated time of delivery. 10 minutes buffer time. 10 minutes minimum preparation time
+  const etd = new Date(
+    Date.now() + max(timefororder * 1000, 600000) + timeToDel * 1000 + 600000
+  ); // Estimated time of delivery. 10 minutes buffer time. 10 minutes minimum preparation time
+  // * 1000 to convert seconds to milliseconds
 
   const otp = String(Math.floor(1000 + Math.random() * 8999));
 

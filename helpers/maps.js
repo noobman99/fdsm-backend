@@ -6,7 +6,9 @@ exports.findDeliveryAgent = async (location) => {
   let deliverer = await Deliverer.find({ workingStatus: 1 });
 
   if (deliverer.length === 0) {
-    throw new Error("No deliverer available");
+    const error = new Error("No deliverer available");
+    error.name = "NoDelivererError";
+    throw error;
   }
 
   let nearestDeliverer = deliverer[0];
@@ -28,13 +30,15 @@ exports.findDeliveryAgent = async (location) => {
     }
   }
 
+  console.log(minTime, minDist);
+
   return { deliverer: nearestDeliverer, distance: minDist, time: minTime };
 };
 
 exports.getDistTime = async (location1, location2) => {
   const key = process.env.TOMTOM_API_KEY;
 
-  let url = `https://api.tomtom.com/routing/1/calculateRoute/${location1.lat},${location1.lon}:${location2.lat},${location2.lon}/json?&sectionType=traffic&report=effectiveSettings&routeType=eco&traffic=true&avoid=unpavedRoads&travelMode=motorcycle&vehicleMaxSpeed=35&vehicleCommercial=false&vehicleEngineType=combustion&key=${key}`;
+  let url = `https://api.tomtom.com/routing/1/calculateRoute/${location1.lat},${location1.lon}:${location2.lat},${location2.lon}/json?&sectionType=traffic&report=effectiveSettings&routeType=eco&traffic=true&avoid=unpavedRoads&travelMode=motorcycle&vehicleMaxSpeed=30&vehicleCommercial=false&vehicleEngineType=combustion&key=${key}`;
   console.log(url);
 
   let res = await fetch(url);
