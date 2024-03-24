@@ -65,7 +65,7 @@ exports.editInfo = async (req, res, next) => {
   if (req.body.tags) {
     restaurant.tags = req.body.tags;
   }
-  if(req.body.image){
+  if (req.body.image) {
     restaurant.image = req.body.image;
   }
 
@@ -131,7 +131,7 @@ exports.setImage = async (req, res, next) => {
 
       res.json({ success: true });
     } catch (error) {
-      console.log("error", error)
+      console.log("error", error);
       if (error.name === "ValidationError") {
         return res.status(400).json({ error: "Invalid Values" });
       } else {
@@ -147,9 +147,9 @@ exports.menu = async (req, res, next) => {
 
   let menu = [];
 
-  for (let item of restaurant.menu) {
-    let dish = await Dish.findById(item);
+  const restaurantMenu = await Dish.find({ restaurant: restaurant._id });
 
+  for (let dish of restaurantMenu) {
     dish = await formatDish(dish, {
       showAvalability: true,
       showRestaurant: true,
@@ -228,14 +228,14 @@ exports.addFoodItem = async (req, res, next) => {
 
   dish = await Dish.create(dish);
 
-  restaurant.menu.push(dish._id);
+  restaurant.dishCount += 1;
 
   await restaurant.save({
     validateBeforeSave: true,
     isNew: false,
   });
 
-  res.json({ message: "Food item added successfully", uid: dish._id});
+  res.json({ message: "Food item added successfully", uid: dish._id });
 };
 
 exports.removeFoodItem = async (req, res, next) => {
@@ -255,7 +255,7 @@ exports.removeFoodItem = async (req, res, next) => {
     return res.status(400).json({ error: "Food item not found." });
   }
 
-  restaurant.menu = restaurant.menu.filter((item) => item !== dish._id);
+  restaurant.dishCount -= 1;
 
   await restaurant.save({
     validateBeforeSave: true,
@@ -332,7 +332,7 @@ exports.foodItem = async (req, res, next) => {
 exports.setFoodItemImage = async (req, res, next) => {
   // Update food item image route
   let restaurant = req.user;
-  console.log(req.file)
+  console.log(req.file);
 
   if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
     return res.status(400).json({ error: "Invalid dish id" });

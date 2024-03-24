@@ -92,9 +92,9 @@ const restaurantSchema = new mongoose.Schema(
       ],
       default: [],
     },
-    menu: {
-      type: [mongoose.Schema.Types.ObjectId],
-      ref: "Dish",
+    dishCount: {
+      type: Number,
+      default: 0,
     },
   },
   { toJSON: { getters: true } }

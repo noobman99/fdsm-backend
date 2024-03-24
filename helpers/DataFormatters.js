@@ -147,9 +147,9 @@ exports.formatRestaurant = async (
   if (options.showMenu || options.showBriefMenu) {
     res.menu = [];
 
-    for (let item of restaurant.menu) {
-      let dish = await Dish.findById(item);
+    const restaurantMenu = await Dish.find({ restaurant: restaurant._id });
 
+    for (let dish of restaurantMenu) {
       if (!dish.isAvailable && !options.showAllDishes) continue;
 
       if (options.showMenu) {
