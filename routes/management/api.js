@@ -29,6 +29,6 @@ router.get("/orders/restaurant/:id", dataEndpoints.ordersByRestaurant);
 
 router.get("/offers", dataEndpoints.offers);
 router.post("/offer", dataEndpoints.createOffer);
-router.delete("/offer/:id", dataEndpoints.deleteOffer);
+router.delete("/offer/:code", dataEndpoints.deleteOffer);
 
 module.exports = router;

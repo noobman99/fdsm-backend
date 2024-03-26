@@ -286,7 +286,7 @@ exports.createOffer = async (req, res, next) => {
 
 exports.deleteOffer = async (req, res, next) => {
   // Delete offer route
-  let offer = await Offer.findOne({ code: req.params.id });
+  let offer = await Offer.findOne({ code: req.params.code });
 
   if (!offer) {
     return res.status(404).json({ error: "Offer not found" });
