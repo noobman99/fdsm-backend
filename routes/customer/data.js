@@ -492,7 +492,11 @@ exports.reviewDeliverer = async (req, res, next) => {
 
 exports.offers = async (req, res, next) => {
   // All offers route
-  let offers = await Offer.find({ customers: { $ne: req.user._id } });
+  let offers = await Offer.find({
+    customers: {
+      $nin: [req.user._id],
+    },
+  });
 
   let resJson = [];
 
@@ -504,4 +508,105 @@ exports.offers = async (req, res, next) => {
   }
 
   res.json(resJson);
+};
+
+exports.recommendations = async (req, res, next) => {
+  // Recommendations route
+  // let orders = await Order.find({ by: req.user._id }, "from");
+  let orders = await Order.aggregate([
+    { $match: { by: req.user._id } },
+    {
+      $sortByCount: "$from",
+    },
+  ]);
+
+  console.log(orders);
+
+  let restaurants = await Restaurant.find({
+    _id: { $in: orders.map((o) => o._id) },
+  });
+
+  console.log(restaurants);
+
+  const LIMIT = 5;
+
+  let resJson = [];
+
+  for (let restaurant of restaurants) {
+    let resto = await formatRestaurant(restaurant, {
+      showBriefMenu: true,
+      showRating: true,
+      showAddress: true,
+      showPhone: true,
+      showEmail: true,
+      showTags: true,
+      showTimings: true,
+      showImage: true,
+    });
+    resto.isFavourite = req.user.favouriteRestaurants.includes(restaurant._id);
+
+    resJson.push(resto);
+  }
+
+  // add restaurants with similar tags if less than LIMIT
+  let i = 0;
+  while (resJson.length < LIMIT && i < restaurants.length) {
+    let recs = await Restaurant.aggregate([
+      {
+        $match: {
+          _id: {
+            $ne: restaurants[i]._id,
+          },
+          tags: {
+            $in: restaurants[i].tags,
+          },
+        },
+      },
+      { $sort: { rating: -1 } },
+      { $limit: LIMIT - resJson.length },
+    ]);
+
+    for (let restaurant of recs) {
+      let resto = await formatRestaurant(restaurant, {
+        showBriefMenu: true,
+        showRating: true,
+        showAddress: true,
+        showPhone: true,
+        showEmail: true,
+        showTags: true,
+        showTimings: true,
+        showImage: true,
+      });
+      resto.isFavourite = req.user.favouriteRestaurants.includes(
+        restaurant._id
+      );
+
+      resJson.push(resto);
+    }
+  }
+
+  // add top rated restaurants if less than LIMIT
+  while (resJson.length < LIMIT) {
+    let recs = await Restaurant.aggregate([{ $sort: { rating: -1 } }]);
+
+    for (let restaurant of recs) {
+      let resto = await formatRestaurant(restaurant, {
+        showBriefMenu: true,
+        showRating: true,
+        showAddress: true,
+        showPhone: true,
+        showEmail: true,
+        showTags: true,
+        showTimings: true,
+        showImage: true,
+      });
+      resto.isFavourite = req.user.favouriteRestaurants.includes(
+        restaurant._id
+      );
+
+      resJson.push(resto);
+    }
+  }
+
+  res.json(resJson.slice(0, LIMIT));
 };
