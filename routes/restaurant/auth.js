@@ -86,6 +86,8 @@ exports.signUp = async (req, res, next) => {
     restaurant = await Restaurant.findOne({ uid });
   } while (restaurant);
 
+  tags = tags.map((tag) => tag[0].toUpperCase() + tag.slice(1).toLowerCase());
+
   try {
     restaurant = {
       uid,

@@ -63,7 +63,9 @@ exports.editInfo = async (req, res, next) => {
     restaurant.timings = req.body.timings;
   }
   if (req.body.tags) {
-    restaurant.tags = req.body.tags;
+    restaurant.tags = req.body.tags.map(
+      (tag) => tag[0].toUpperCase() + tag.slice(1).toLowerCase()
+    );
   }
   if (req.body.image) {
     restaurant.image = req.body.image;
