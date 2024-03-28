@@ -39,7 +39,7 @@ try {
 // Routes
 app.use("/api/customer", customerApi);
 app.use("/api/restaurant", restaurantApi);
-app.use("/api/deliverer", delivererApi);
+app.use("/api/delivery-agent", delivererApi);
 app.use("/api/management", managementApi);
 
 // image route
