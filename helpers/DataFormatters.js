@@ -15,7 +15,7 @@ exports.formatDish = async (
 ) => {
   let res = {
     name: dish.name,
-    uid: dish.id,
+    uid: dish._id.toString(),
   };
 
   if (options.showAvalability) {
@@ -79,7 +79,7 @@ exports.formatOrder = async (
     items,
     total: order.total,
     isPaid: order.isPaid,
-    uid: order.id,
+    uid: order._id.toString(),
     isCompleted: order.isCompleted,
     orderTime: order._id.getTimestamp(),
   };
