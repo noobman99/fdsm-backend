@@ -513,6 +513,8 @@ exports.offers = async (req, res, next) => {
 exports.recommendations = async (req, res, next) => {
   // Recommendations route
   // let orders = await Order.find({ by: req.user._id }, "from");
+  const numRes = await Restaurant.countDocuments();
+
   let orders = await Order.aggregate([
     { $match: { by: req.user._id } },
     {
@@ -520,15 +522,13 @@ exports.recommendations = async (req, res, next) => {
     },
   ]);
 
-  console.log(orders);
-
   let restaurants = await Restaurant.find({
     _id: { $in: orders.map((o) => o._id) },
   });
 
-  console.log(restaurants);
-
   const LIMIT = 5;
+
+  let added = new Set();
 
   let resJson = [];
 
@@ -546,6 +546,7 @@ exports.recommendations = async (req, res, next) => {
     resto.isFavourite = req.user.favouriteRestaurants.includes(restaurant._id);
 
     resJson.push(resto);
+    added.add(restaurant._id.toString());
   }
 
   // add restaurants with similar tags if less than LIMIT
@@ -566,7 +567,13 @@ exports.recommendations = async (req, res, next) => {
       { $limit: LIMIT - resJson.length },
     ]);
 
+    i++;
+
     for (let restaurant of recs) {
+      if (added.has(restaurant._id.toString())) {
+        continue;
+      }
+
       let resto = await formatRestaurant(restaurant, {
         showBriefMenu: true,
         showRating: true,
@@ -582,14 +589,19 @@ exports.recommendations = async (req, res, next) => {
       );
 
       resJson.push(resto);
+      added.add(restaurant._id.toString());
     }
   }
 
   // add top rated restaurants if less than LIMIT
-  while (resJson.length < LIMIT) {
+  while (resJson.length < LIMIT && added.size < numRes) {
     let recs = await Restaurant.aggregate([{ $sort: { rating: -1 } }]);
 
     for (let restaurant of recs) {
+      if (added.has(restaurant._id.toString())) {
+        continue;
+      }
+
       let resto = await formatRestaurant(restaurant, {
         showBriefMenu: true,
         showRating: true,
@@ -605,6 +617,7 @@ exports.recommendations = async (req, res, next) => {
       );
 
       resJson.push(resto);
+      added.add(restaurant._id.toString());
     }
   }
 
