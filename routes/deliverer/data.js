@@ -81,7 +81,7 @@ exports.orderById = async (req, res, next) => {
   let order = await Order.findById(req.params.id);
 
   if (!order) {
-    return res.status(404).json({ error: "Order not found" });
+    return res.status(406).json({ error: "Order not found" });
   }
 
   if (order.deliveryBy.toString() !== req.user._id.toString()) {
@@ -101,7 +101,7 @@ exports.currentOrder = async (req, res, next) => {
   });
 
   if (!order) {
-    return res.status(404).json({ error: "No current order" });
+    return res.status(406).json({ error: "No current order" });
   }
 
   let resJson = await formatOrder(order);
@@ -124,7 +124,7 @@ exports.finishOrder = async (req, res, next) => {
   let order = await Order.findById(req.params.id);
 
   if (!order) {
-    return res.status(404).json({ error: "Order not found" });
+    return res.status(406).json({ error: "Order not found" });
   }
 
   if (order.deliveryBy._id.toString() !== deliverer._id.toString()) {
@@ -132,7 +132,7 @@ exports.finishOrder = async (req, res, next) => {
   }
 
   if (order.isCompleted) {
-    return res.status(400).json({ error: "Order already completed" });
+    return res.status(406).json({ error: "Order already completed" });
   }
 
   if (order.otp !== req.body.otp) {

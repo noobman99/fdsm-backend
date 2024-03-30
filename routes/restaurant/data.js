@@ -53,7 +53,7 @@ exports.editInfo = async (req, res, next) => {
         adr = await geoCode(adr);
         restaurant.address = { ...adr, text: req.body.address };
       } catch (error) {
-        return res.status(404).json({ error: "Invalid Address" });
+        return res.status(406).json({ error: "Invalid Address" });
       }
     } else {
       restaurant.address = req.body.address;
@@ -190,11 +190,11 @@ exports.orderById = async (req, res, next) => {
   try {
     order = await Order.findById(req.params.id);
   } catch (error) {
-    return res.status(404).json({ error: "Order not found" });
+    return res.status(406).json({ error: "Order not found" });
   }
 
   if (!order) {
-    return res.status(404).json({ error: "Order not found" });
+    return res.status(406).json({ error: "Order not found" });
   }
 
   if (order.from.toString() !== req.user._id.toString()) {
@@ -314,7 +314,7 @@ exports.foodItem = async (req, res, next) => {
   let dish = await Dish.findById(req.params.id);
 
   if (!dish) {
-    return res.status(404).json({ error: "Food item not found" });
+    return res.status(406).json({ error: "Food item not found" });
   }
 
   if (dish.restaurant.toString() !== req.user._id.toString()) {

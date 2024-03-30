@@ -29,7 +29,7 @@ exports.signUp = async (req, res, next) => {
     ({ name, email, phone, password, address, timings, tags, image } =
       req.body);
   } catch (error) {
-    return res.status(500).json({ success: false, error: "Invalid Request" });
+    return res.status(400).json({ success: false, error: "Invalid Request" });
   }
 
   if (!name || !email || !password || !address || !timings || !phone) {
@@ -65,7 +65,7 @@ exports.signUp = async (req, res, next) => {
       adr = await geoCode(adr);
       address = { ...adr, text: address };
     } catch (error) {
-      return res.status(404).json({ error: "Invalid Address" });
+      return res.status(406).json({ error: "Invalid Address" });
     }
   }
 
@@ -123,7 +123,7 @@ exports.logIn = async (req, res, next) => {
   try {
     ({ email, password } = req.body);
   } catch (error) {
-    return res.status(500).json({ success: false, error: "Invalid Request" });
+    return res.status(400).json({ success: false, error: "Invalid Request" });
   }
 
   if (!email || !password) {
@@ -153,7 +153,7 @@ exports.changePassword = async (req, res, next) => {
   try {
     ({ oldPassword, newPassword } = req.body);
   } catch (error) {
-    return res.status(500).json({ success: false, error: "Invalid Request" });
+    return res.status(400).json({ success: false, error: "Invalid Request" });
   }
 
   if (!oldPassword || !newPassword) {

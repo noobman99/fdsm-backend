@@ -29,7 +29,7 @@ exports.signUp = async (req, res, next) => {
     console.log(req.body);
     ({ name, email, phone, password, address } = req.body);
   } catch (error) {
-    res.status(500).json({ success: false, error: "Invalid Request" });
+    res.status(400).json({ success: false, error: "Invalid Request" });
 
     return;
   }
@@ -53,7 +53,7 @@ exports.signUp = async (req, res, next) => {
   }
 
   try {
-    console.log(typeof address, address)
+    console.log(typeof address, address);
     if (address) {
       let adr = encodeURIComponent(address);
       adr = await geoCode(adr);
@@ -61,13 +61,13 @@ exports.signUp = async (req, res, next) => {
     }
   } catch (error) {
     console.log(error);
-    return res.status(404).json({ success: false, error: "Invalid Address" });
+    return res.status(406).json({ success: false, error: "Invalid Address" });
   }
 
   let customer = await Customer.findOne({ email });
 
   if (customer) {
-    res.status(400).json({ success: false, error: "Email already exists" });
+    res.status(406).json({ success: false, error: "Email already exists" });
 
     return;
   }
@@ -141,7 +141,7 @@ exports.changePassword = async (req, res, next) => {
   try {
     ({ oldPassword, newPassword } = req.body);
   } catch (error) {
-    return res.status(500).json({ success: false, error: "Invalid Request" });
+    return res.status(400).json({ success: false, error: "Invalid Request" });
   }
 
   if (!oldPassword || !newPassword) {
@@ -153,8 +153,8 @@ exports.changePassword = async (req, res, next) => {
   const validPassword = await bcrypt.compare(oldPassword, customer.password);
   if (!validPassword) {
     return res
-      .status(400)
-      .json({ success: false, error: "Invalid previous password" });
+      .status(406)
+      .json({ success: false, error: "Incorrect previous password" });
   }
 
   const salt = await bcrypt.genSalt(10);
