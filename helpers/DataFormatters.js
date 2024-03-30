@@ -66,6 +66,7 @@ exports.formatOrder = async (
     restaurant: await this.formatRestaurant(restaurant, {
       showPhone: true,
       showAddress: true,
+      showImage: true,
     }),
     deliverer: await this.formatDeliverer(deliverer, {
       showPhone: true,
