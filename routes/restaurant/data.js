@@ -292,7 +292,7 @@ exports.updateFoodItem = async (req, res, next) => {
   if (req.body.price) {
     dish.price = Math.round(req.body.price);
   }
-  if (req.body.isAvailable) {
+  if (req.body.isAvailable !== undefined) {
     dish.isAvailable = req.body.isAvailable;
   }
 
