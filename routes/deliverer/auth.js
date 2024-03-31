@@ -27,7 +27,7 @@ exports.signUp = async (req, res, next) => {
   try {
     ({ name, email, phone, password } = req.body);
   } catch (error) {
-    return res.status(500).json({ success: false, error: "Invalid Request" });
+    return res.status(400).json({ success: false, error: "Invalid Request" });
   }
 
   if (!name || !email || !password) {
@@ -48,7 +48,7 @@ exports.signUp = async (req, res, next) => {
 
   if (deliverer) {
     return res
-      .status(400)
+      .status(406)
       .json({ success: false, error: "Email already exists" });
   }
 
@@ -88,7 +88,7 @@ exports.logIn = async (req, res, next) => {
   try {
     ({ email, password } = req.body);
   } catch (error) {
-    return res.status(500).json({ success: false, error: "Invalid Request" });
+    return res.status(400).json({ success: false, error: "Invalid Request" });
   }
 
   if (!email || !password) {
@@ -116,7 +116,7 @@ exports.changePassword = async (req, res, next) => {
   try {
     ({ oldPassword, newPassword } = req.body);
   } catch (error) {
-    return res.status(500).json({ success: false, error: "Invalid Request" });
+    return res.status(400).json({ success: false, error: "Invalid Request" });
   }
 
   if (!oldPassword || !newPassword) {

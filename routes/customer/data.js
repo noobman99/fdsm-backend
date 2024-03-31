@@ -50,7 +50,7 @@ exports.editInfo = async (req, res, next) => {
         adr = await geoCode(adr);
         customer.address = { ...adr, text: req.body.address };
       } catch (error) {
-        return res.status(404).json({ error: "Invalid Address" });
+        return res.status(406).json({ error: "Invalid Address" });
       }
     } else {
       customer.address = req.body.address;
@@ -68,7 +68,9 @@ exports.editInfo = async (req, res, next) => {
     if (error.name === "ValidationError") {
       return res.status(400).json({ error: "Invalid Values" });
     } else {
-      return res.status(500).json({ error: "Server Error" });
+      return res
+        .status(500)
+        .json({ error: "Server Error. Please try again later." });
     }
   }
 };
@@ -96,11 +98,11 @@ exports.orderById = async (req, res, next) => {
   let order = await Order.findById(req.params.id);
 
   if (!order) {
-    return res.status(404).json({ error: "Order not found" });
+    return res.status(406).json({ error: "Order not found" });
   }
 
   if (order.by.toString() !== req.user._id.toString()) {
-    return res.status(401).json({ error: "Unauthorized" });
+    return res.status(401).json({ error: "Unauthorized to view this order" });
   }
 
   res.json(await formatOrder(order, { showOtp: true, showRatingStatus: true }));
@@ -138,7 +140,7 @@ exports.newFavouriteRestaurant = async (req, res, next) => {
   let restaurant = await Restaurant.findOne({ uid: req.params.id }, "_id");
 
   if (!restaurant) {
-    return res.status(404).json({ error: "Restaurant not found" });
+    return res.status(406).json({ error: "Restaurant not found" });
   }
 
   if (customer.favouriteRestaurants.includes(restaurant._id)) {
@@ -162,7 +164,7 @@ exports.removeFavouriteRestaurant = async (req, res, next) => {
   let restaurant = await Restaurant.findOne({ uid: req.params.id }, "_id");
 
   if (!restaurant) {
-    return res.status(404).json({ error: "Restaurant not found" });
+    return res.status(406).json({ error: "Restaurant not found" });
   }
 
   if (!customer.favouriteRestaurants.includes(restaurant._id)) {
@@ -211,7 +213,7 @@ exports.restaurantById = async (req, res, next) => {
   let restaurant = await Restaurant.findOne({ uid: req.params.id });
 
   if (!restaurant) {
-    return res.status(404).json({ error: "Restaurant not found" });
+    return res.status(406).json({ error: "Restaurant not found" });
   }
 
   let resJson = await formatRestaurant(restaurant, {
@@ -239,19 +241,19 @@ exports.newOrder = async (req, res, next) => {
 
   // Validation
   if (!req.body.restaurant) {
-    return res.status(401).json({ error: "Invalid restaurant" });
+    return res.status(400).json({ error: "Invalid restaurant" });
   }
   if (!req.body.items) {
-    return res.status(401).json({ error: "Invalid items" });
+    return res.status(400).json({ error: "Invalid items" });
   }
   if (!req.body.deliveryAddress) {
-    return res.status(401).json({ error: "Invalid delivery address" });
+    return res.status(400).json({ error: "Invalid delivery address" });
   }
 
   const restaurant = await Restaurant.findOne({ uid: req.body.restaurant });
 
   if (!restaurant) {
-    return res.status(900).json({ error: "Restaurant not found" });
+    return res.status(406).json({ error: "Restaurant not found" });
   }
 
   // Find delivery agent
@@ -262,7 +264,7 @@ exports.newOrder = async (req, res, next) => {
     ));
   } catch (error) {
     if (error.name === "NoDelivererError") {
-      return res.status(404).json({
+      return res.status(406).json({
         error:
           "We are unable to place an order at the moment. Please try again later",
       });
@@ -283,7 +285,7 @@ exports.newOrder = async (req, res, next) => {
     try {
       deliveryAddress = await geoCode(deliveryAddress);
     } catch (error) {
-      return res.status(404).json({ error: "Invalid Delivery Address" });
+      return res.status(400).json({ error: "Invalid Delivery Address" });
     }
   }
 
@@ -296,7 +298,7 @@ exports.newOrder = async (req, res, next) => {
 
     deliveryAddress.text = req.body.deliveryAddress;
   } catch (error) {
-    return res.status(404).json({
+    return res.status(406).json({
       error: `Cannot Deliver from ${restaurant.name} to your address.`,
     });
   }
@@ -316,7 +318,7 @@ exports.newOrder = async (req, res, next) => {
     let dish = await Dish.findById(item.dish);
 
     if (!dish) {
-      return res.status(404).json({ error: "Dish not found" });
+      return res.status(406).json({ error: "Dish not found" });
     }
 
     if (dish.restaurant.toString() !== restaurant._id.toString()) {
@@ -335,11 +337,11 @@ exports.newOrder = async (req, res, next) => {
     let offer = await Offer.findOne({ code: req.body.offerCode });
 
     if (!offer) {
-      return res.status(404).json({ error: "Offer not found" });
+      return res.status(406).json({ error: "Offer not found" });
     }
 
     if (offer.customers.includes(customer._id)) {
-      return res.status(400).json({ error: "Offer already used" });
+      return res.status(406).json({ error: "Offer already used" });
     }
 
     total = total - (total * offer.discount) / 100;
@@ -393,13 +395,13 @@ exports.reviewRestaurant = async (req, res, next) => {
   }
 
   if (!restaurant) {
-    return res.status(404).json({ error: "Restaurant not found" });
+    return res.status(406).json({ error: "Restaurant not found" });
   }
 
   let order = await Order.findById(req.body.order);
 
   if (!order) {
-    return res.status(404).json({ error: "Order not found" });
+    return res.status(406).json({ error: "Order not found" });
   }
 
   if (order.from.toString() !== restaurant._id.toString()) {
@@ -449,11 +451,11 @@ exports.reviewDeliverer = async (req, res, next) => {
   let order = await Order.findById(req.body.order);
 
   if (!order) {
-    return res.status(404).json({ error: "Order not found" });
+    return res.status(406).json({ error: "Order not found" });
   }
 
   if (!deliverer) {
-    return res.status(404).json({ error: "Deliverer not found" });
+    return res.status(406).json({ error: "Deliverer not found" });
   }
 
   if (order.deliveryBy.toString() !== deliverer._id.toString()) {

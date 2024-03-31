@@ -51,7 +51,7 @@ const customerAuth = async (req, res, next) => {
         error: "Invalid credentials. Please login again.",
       });
     } else {
-      res.status(401).json({
+      res.status(500).json({
         success: false,
         error: "Server could not process your request at this time.",
       });

@@ -64,7 +64,7 @@ exports.customerById = async (req, res, next) => {
   // Customer info route
   let customer = await Customer.findOne({ uid: req.params.id });
   if (!customer) {
-    return res.status(404).json({ error: "Customer not found" });
+    return res.status(406).json({ error: "Customer not found" });
   }
 
   let resJson = await formatCustomer(customer, {
@@ -82,7 +82,7 @@ exports.ordersByCustomer = async (req, res, next) => {
   let customer = await Customer.find({ uid: req.params.id });
 
   if (!customer) {
-    return res.status(404).json({ error: "Customer not found" });
+    return res.status(406).json({ error: "Customer not found" });
   }
 
   let orders = await Order.find({ by: customer });
@@ -121,7 +121,7 @@ exports.delivererById = async (req, res, next) => {
   let deliveryAgent = await Deliverer.findOne({ uid: req.params.id });
 
   if (!deliveryAgent) {
-    return res.status(404).json({ error: "Delivery agent not found" });
+    return res.status(406).json({ error: "Delivery agent not found" });
   }
 
   let resJson = await formatDeliverer(deliveryAgent, {
@@ -142,7 +142,7 @@ exports.ordersByDeliverer = async (req, res, next) => {
   let deliveryAgent = await Deliverer.find({ uid: req.params.id });
 
   if (!deliveryAgent) {
-    return res.status(404).json({ error: "Delivery agent not found" });
+    return res.status(406).json({ error: "Delivery agent not found" });
   }
 
   let orders = await Order.find({ deliveryBy: deliveryAgent });
@@ -161,7 +161,7 @@ exports.markPaid = async (req, res, next) => {
   let deliveryAgent = await Deliverer.findOne({ uid: req.params.id });
 
   if (!deliveryAgent) {
-    return res.status(404).json({ error: "Delivery agent not found" });
+    return res.status(406).json({ error: "Delivery agent not found" });
   }
 
   let orders = await Order.find({ deliveryBy: deliveryAgent, isPaid: 2 });
@@ -203,7 +203,7 @@ exports.restaurantById = async (req, res, next) => {
   let restaurant = await Restaurant.findOne({ uid: req.params.id });
 
   if (!restaurant) {
-    return res.status(404).json({ error: "Restaurant not found" });
+    return res.status(406).json({ error: "Restaurant not found" });
   }
 
   let resJson = await formatRestaurant(restaurant, {
@@ -227,7 +227,7 @@ exports.ordersByRestaurant = async (req, res, next) => {
   let restaurant = await Restaurant.find({ uid: req.params.id });
 
   if (!restaurant) {
-    return res.status(404).json({ error: "Restaurant not found" });
+    return res.status(406).json({ error: "Restaurant not found" });
   }
 
   let orders = await Order.find({ from: restaurant });
@@ -276,7 +276,7 @@ exports.createOffer = async (req, res, next) => {
     } else {
       console.error(err);
       return res
-        .status(400)
+        .status(500)
         .json({ error: "Cannot process your request at the time" });
     }
   }
@@ -289,7 +289,7 @@ exports.deleteOffer = async (req, res, next) => {
   let offer = await Offer.findOne({ code: req.params.code });
 
   if (!offer) {
-    return res.status(404).json({ error: "Offer not found" });
+    return res.status(406).json({ error: "Offer not found" });
   }
 
   try {
@@ -297,7 +297,7 @@ exports.deleteOffer = async (req, res, next) => {
   } catch (err) {
     console.error(err);
     return res
-      .status(400)
+      .status(500)
       .json({ error: "Cannot process your request at the time" });
   }
 
