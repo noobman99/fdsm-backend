@@ -194,8 +194,10 @@ exports.formatRestaurant = async (
   if (options.showPendingMoney) {
     const orders = await Order.find({
       from: restaurant._id,
-      isPaid: 1,
+      isPaid: { $in: [1, 2] },
     });
+
+    console.log(orders);
 
     res.pendingMoney = 0;
 
@@ -313,7 +315,7 @@ exports.formatDeliverer = async (
   if (options.showPendingMoney) {
     const orders = await Order.find({
       deliveryBy: deliverer._id,
-      isPaid: 2,
+      isPaid: { $in: [2, 4] },
     });
 
     res.pendingMoney = 0;
