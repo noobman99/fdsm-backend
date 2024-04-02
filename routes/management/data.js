@@ -164,10 +164,13 @@ exports.markPaid = async (req, res, next) => {
     return res.status(406).json({ error: "Delivery agent not found" });
   }
 
-  let orders = await Order.find({ deliveryBy: deliveryAgent, isPaid: 2 });
+  let orders = await Order.find({
+    deliveryBy: deliveryAgent,
+    isPaid: { $in: [2, 4] },
+  });
 
   for (let order of orders) {
-    order.isPaid = 1;
+    order.isPaid = order.isPaid - 1;
     await order.save({ isNew: false });
   }
 
@@ -253,7 +256,7 @@ exports.markPaidRes = async (req, res, next) => {
   let orders = await Order.find({ from: restaurant, isPaid: { $in: [1, 2] } });
 
   for (let order of orders) {
-    order.isPaid = 3;
+    order.isPaid = order.isPaid + 2;
     await order.save({ isNew: false });
   }
 
