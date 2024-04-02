@@ -217,6 +217,7 @@ exports.restaurantById = async (req, res, next) => {
     showReviews: true,
     showImage: true,
     showAllDishes: true,
+    showPendingMoney: true,
   });
 
   res.json(resJson);
@@ -239,6 +240,24 @@ exports.ordersByRestaurant = async (req, res, next) => {
   }
 
   res.json(resJson);
+};
+
+exports.markPaidRes = async (req, res, next) => {
+  // Mark restaurant paid route
+  let restaurant = await Restaurant.findOne({ uid: req.params.id });
+
+  if (!restaurant) {
+    return res.status(406).json({ error: "Restaurant not found" });
+  }
+
+  let orders = await Order.find({ from: restaurant, isPaid: { $in: [1, 2] } });
+
+  for (let order of orders) {
+    order.isPaid = 3;
+    await order.save({ isNew: false });
+  }
+
+  res.json({ success: true });
 };
 
 exports.offers = async (req, res, next) => {
