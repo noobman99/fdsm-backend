@@ -79,7 +79,7 @@ exports.formatOrder = async (
     },
     items,
     total: order.total,
-    isPaid: order.isPaid,
+    isPaid: order.isPaid !== 0,
     uid: order._id.toString(),
     isCompleted: order.isCompleted,
     orderTime: order._id.getTimestamp(),
@@ -116,6 +116,7 @@ exports.formatRestaurant = async (
     showReviews: false,
     showImage: false,
     showAllDishes: false,
+    showPendingMoney: false,
   }
 ) => {
   let res = {
@@ -188,6 +189,19 @@ exports.formatRestaurant = async (
 
   if (options.showImage && restaurant.image) {
     res.image = "/" + restaurant.image.replace(/\\/g, "/");
+  }
+
+  if (options.showPendingMoney) {
+    const orders = await Order.find({
+      from: restaurant._id,
+      isPaid: 1,
+    });
+
+    res.pendingMoney = 0;
+
+    for (let order of orders) {
+      res.pendingMoney += order.total;
+    }
   }
 
   return res;
