@@ -6,6 +6,7 @@ const {
   formatOrder,
 } = require("../../helpers/DataFormatters");
 const Dish = require("../../models/Dish");
+const Customer = require("../../models/Customer");
 const { default: mongoose } = require("mongoose");
 const { geoCode } = require("../../helpers/maps");
 const multer = require("multer");
