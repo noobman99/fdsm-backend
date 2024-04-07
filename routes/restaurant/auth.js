@@ -73,7 +73,7 @@ exports.signUp = async (req, res, next) => {
 
   if (restaurant) {
     return res
-      .status(400)
+      .status(406)
       .json({ success: false, error: "Email already exists" });
   }
 
