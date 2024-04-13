@@ -9,6 +9,7 @@ const {
   formatOrder,
   formatDeliverer,
   formatRestaurant,
+  formatBalance,
 } = require("../../helpers/DataFormatters");
 const Offer = require("../../models/Offer");
 
@@ -169,10 +170,23 @@ exports.markPaid = async (req, res, next) => {
     isPaid: { $in: [2, 4] },
   });
 
+  let total = 0;
   for (let order of orders) {
     order.isPaid = order.isPaid - 1;
+    total += order.total;
     await order.save({ isNew: false });
   }
+
+  const balSheet = await Balance.findOne({
+    month: new Date().getMonth(),
+    year: new Date().getFullYear(),
+  });
+
+  balSheet.toCollect -= total;
+  balSheet.collected += total;
+  balSheet.inHand += total;
+
+  await balSheet.save({ isNew: false });
 
   res.json({ success: true });
 };
@@ -255,10 +269,24 @@ exports.markPaidRes = async (req, res, next) => {
 
   let orders = await Order.find({ from: restaurant, isPaid: { $in: [1, 2] } });
 
+  let total = 0;
   for (let order of orders) {
     order.isPaid = order.isPaid + 2;
+    total += order.total;
     await order.save({ isNew: false });
   }
+
+  const balSheet = await Balance.findOne({
+    month: new Date().getMonth(),
+    year: new Date().getFullYear(),
+  });
+
+  total = total * 0.9;
+  balSheet.toGive -= total;
+  balSheet.given += total;
+  balSheet.inHand -= total;
+
+  await balSheet.save({ isNew: false });
 
   res.json({ success: true });
 };
@@ -324,4 +352,17 @@ exports.deleteOffer = async (req, res, next) => {
   }
 
   res.json({ success: true });
+};
+
+exports.balances = async (req, res, next) => {
+  // All balances route
+  let balances = await Balance.find({});
+
+  let resJson = [];
+
+  for (let balance of balances) {
+    resJson.push(formatBalance(balance));
+  }
+
+  res.json(resJson);
 };

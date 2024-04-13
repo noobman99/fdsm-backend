@@ -336,3 +336,15 @@ exports.formatManagement = (management) => {
     phone: management.phone,
   };
 };
+
+exports.formatBalance = (balance) => {
+  return {
+    month: balance.month,
+    year: balance.year,
+    toCollect: balance.toCollect,
+    collected: balance.collected,
+    surplus: balance.inHand,
+    toGive: balance.toGive,
+    given: balance.given,
+  };
+};
