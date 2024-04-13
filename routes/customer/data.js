@@ -367,6 +367,10 @@ exports.newOrder = async (req, res, next) => {
     status: 3,
   };
 
+  if (req.body.isPaid === 1) {
+    order.transactionID = req.body.transactionID;
+  }
+
   if (req.body.offerCode) {
     order.offerCode = req.body.offerCode;
   }
@@ -625,3 +629,51 @@ exports.recommendations = async (req, res, next) => {
 
   res.json(resJson.slice(0, LIMIT));
 };
+
+const Razorpay = require("razorpay");
+const Transaction = require("../../models/Transaction");
+
+const razorpay = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_KEY_SECRET,
+});
+
+exports.checkout = async (req, res, next) => {
+  // Checkout route
+  const { amount } = req.body;
+
+  const options = {
+    amount: Number(amount * 100),
+    currency: "INR",
+  };
+  const payment = await razorpay.orders.create(options);
+
+  const transaction = await Transaction.create({
+    customerID: req.user._id,
+    amount: amount,
+    transactionID: payment.id,
+  });
+
+  res.status(200).json({ transaction, payment });
+};
+
+exports.confirmPayment = async (req, res, next) => {
+  const { razorpay_payment_id, razorpay_order_id, razorpay_signature } =
+    req.body;
+
+  const transaction = await Transaction.findOneAndUpdate(
+    { transactionID: razorpay_order_id },
+    {
+      razorpay_payment_id,
+      razorpay_order_id,
+      razorpay_signature,
+    }
+  );
+
+  if (!transaction) {
+    return res.status(400).json({ message: "Invalid transaction" });
+  }
+
+  res.status(200).json({ success: true, message: "Payment successful", transaction });
+}
+

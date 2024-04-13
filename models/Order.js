@@ -84,6 +84,9 @@ const orderSchema = new mongoose.Schema(
     offerCode: {
       type: String,
     },
+    transactionID: {
+      type: String,
+    },
   },
   { timestamps: true }
 );
