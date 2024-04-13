@@ -384,6 +384,16 @@ exports.newOrder = async (req, res, next) => {
     isNew: false,
   });
 
+  const balSheet = await Balance.findOne({
+    month: new Date().getMonth(),
+    year: new Date().getFullYear(),
+  });
+
+  balSheet.toCollect += total;
+  balSheet.toGive += total * 0.9;
+
+  await balSheet.save({ isNew: false });
+
   res.json(await formatOrder(order, { showOtp: true }));
 };
 
@@ -418,7 +428,7 @@ exports.reviewRestaurant = async (req, res, next) => {
 
   restaurant.rating = Math.round(
     (restaurant.rating * restaurant.reviews.length + Number(req.body.rating)) /
-    (restaurant.reviews.length + 1)
+      (restaurant.reviews.length + 1)
   );
 
   restaurant.reviews.push({
@@ -472,7 +482,7 @@ exports.reviewDeliverer = async (req, res, next) => {
 
   deliverer.rating = Math.round(
     (deliverer.rating * deliverer.reviews.length + Number(req.body.rating)) /
-    (deliverer.reviews.length + 1)
+      (deliverer.reviews.length + 1)
   );
 
   deliverer.reviews.push({
