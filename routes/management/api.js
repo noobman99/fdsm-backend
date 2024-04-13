@@ -28,6 +28,7 @@ router.get("/restaurant/:id", dataEndpoints.restaurantById);
 router.post("/markpaid/restaurant/:id", dataEndpoints.markPaidRes);
 router.get("/orders/restaurant/:id", dataEndpoints.ordersByRestaurant);
 router.get("/balances", dataEndpoints.balances);
+router.get("/stats", dataEndpoints.stats);
 
 router.get("/offers", dataEndpoints.offers);
 router.post("/offer", dataEndpoints.createOffer);
