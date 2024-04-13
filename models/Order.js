@@ -69,8 +69,8 @@ const orderSchema = new mongoose.Schema(
       type: Number, // 0 - not paid, 1 - paid directly, 2 - paid to deliverer
       default: 0,
     },
-    isCompleted: {
-      type: Boolean,
+    status: {
+      type: Number, // 0 - completed, 1 - out for delivery, 2 - cooked & to be collected, 3 - making
       default: false,
     },
     isRestaurantRated: {
