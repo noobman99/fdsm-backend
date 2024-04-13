@@ -325,3 +325,78 @@ exports.deleteOffer = async (req, res, next) => {
 
   res.json({ success: true });
 };
+
+exports.stats = async (req, res, next) => {
+  // Statistics route
+  const statType = req.query.type;
+
+  let orderFilter;
+
+  if (statType === "today") {
+    orderFilter = {
+      _id: {
+        $gte: new Date(new Date().setHours(0, 0, 0)),
+        $lt: new Date(new Date().setHours(23, 59, 59)),
+      },
+    };
+  } else if (statType === "week") {
+    orderFilter = {
+      _id: {
+        $gte: new Date(new Date().setDate(new Date().getDate() - 7)),
+        $lt: new Date(),
+      },
+    };
+  } else if (statType === "month") {
+    orderFilter = {
+      _id: {
+        $gte: new Date(new Date().setDate(new Date().getDate() - 30)),
+        $lt: new Date(),
+      },
+    };
+  } else {
+    return res.status(406).json({ error: "Invalid stat type" });
+  }
+
+  let orders = await Order.aggregate([
+    {
+      $match: orderFilter,
+    },
+    {
+      $group: {
+        _id: null,
+        total: { $sum: "$total" },
+        count: { $sum: 1 },
+      },
+    },
+    {
+      $sort: { count: -1 },
+    },
+  ]);
+
+  console.log(orders);
+
+  let numOrders, totalRevenue;
+  for (let order of orders) {
+    numOrders += order.count;
+    totalRevenue += order.total;
+  }
+
+  let numCustomers = await Customer.countDocuments({});
+  let numDeliverers = await Deliverer.countDocuments({});
+  let numRestaurants = await Restaurant.countDocuments({});
+  let topRes = [];
+
+  if (numOrders) {
+    const idList = orders.slice(0, 5).map((order) => order._id);
+    topRes = await Restaurant.find({ _id: { $in: idList } });
+  }
+
+  res.json({
+    numOrders,
+    totalRevenue,
+    numCustomers,
+    numDeliverers,
+    numRestaurants,
+    topRes: topRes.length ? topRes.map((res) => res.name) : null,
+  });
+};
