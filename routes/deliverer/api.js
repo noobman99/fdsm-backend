@@ -19,7 +19,7 @@ router.put("/info", dataEndpoints.editInfo);
 router.get("/orders", dataEndpoints.orders);
 router.get("/order/:id", dataEndpoints.orderById);
 router.get("/current", dataEndpoints.currentOrder);
-router.put("/order/:id", dataEndpoints.finishOrder);
+router.put("/order/:id", dataEndpoints.updateOrder);
 router.put("/location", dataEndpoints.updateLocation);
 router.put("/working", dataEndpoints.pauseWorking);
 router.get("/reviews", dataEndpoints.reviews);
