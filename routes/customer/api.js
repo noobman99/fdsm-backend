@@ -32,4 +32,6 @@ router.post("/reviews/deliverer/:id", dataEndpoints.reviewDeliverer);
 router.get("/offers", dataEndpoints.offers);
 router.get("/recommendations", dataEndpoints.recommendations);
 
+router.post("/order/checkout", dataEndpoints.checkout);
+router.put("/order/confirm/:id", dataEndpoints.confirmPayment);
 module.exports = router;
