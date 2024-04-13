@@ -81,11 +81,11 @@ exports.formatOrder = async (
     total: order.total,
     isPaid: order.isPaid !== 0,
     uid: order._id.toString(),
-    isCompleted: order.isCompleted,
+    status: order.status,
     orderTime: order._id.getTimestamp(),
   };
 
-  if (options.showOtp && !order.isCompleted) {
+  if (options.showOtp && order.status !== 0) {
     res.otp = order.otp;
     res.etd = order.etd;
   }

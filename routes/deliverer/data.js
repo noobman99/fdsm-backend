@@ -98,7 +98,7 @@ exports.currentOrder = async (req, res, next) => {
 
   let order = await Order.findOne({
     deliveryBy: deliverer._id,
-    isCompleted: false,
+    status: { $in: [1, 2, 3] },
   });
 
   if (!order) {
@@ -172,15 +172,19 @@ const deliverOrder = async (req, res, next) => {
     return res.status(401).json({ error: "Unauthorized" });
   }
 
-  if (order.isCompleted) {
+  if (order.status === 0) {
     return res.status(406).json({ error: "Order already completed" });
+  }
+
+  if (order.status !== 1) {
+    return res.status(406).json({ error: "Order has not been collected" });
   }
 
   if (order.otp !== req.body.otp) {
     return res.status(400).json({ error: "Invalid OTP" });
   }
 
-  order.isCompleted = true;
+  order.status = 0;
   order.isPaid = order.isPaid ? 1 : 2;
 
   deliverer.workingStatus = 1;
