@@ -208,7 +208,7 @@ exports.updateLocation = async (req, res, next) => {
 
   deliverer.location = req.body.location;
 
-  if (!deliverer.workingStatus) {
+  if (deliverer.workingStatus === 0) {
     deliverer.workingStatus = 1;
   }
 

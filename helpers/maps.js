@@ -11,23 +11,32 @@ exports.findDeliveryAgent = async (location) => {
     throw error;
   }
 
-  let nearestDeliverer = deliverer[0];
-  let { distance: minDist, time: minTime } = await this.getDistTime(
-    location,
-    nearestDeliverer.location
-  );
+  let nearestDeliverer, minDist, minTime;
+  minDist = 500000;
   let dist, time;
 
-  for (let i = 1; i < deliverer.length; i++) {
-    ({ distance: dist, time } = await this.getDistTime(
-      location,
-      deliverer[i].location
-    ));
-    if (dist < minDist) {
-      minDist = dist;
-      minTime = time;
-      nearestDeliverer = deliverer[i];
+  for (let i = 0; i < deliverer.length; i++) {
+    try {
+      ({ distance: dist, time } = await this.getDistTime(
+        location,
+        deliverer[i].location
+      ));
+      if (dist < minDist) {
+        minDist = dist;
+        minTime = time;
+        nearestDeliverer = deliverer[i];
+      }
+    } catch (error) {
+      console.log(error);
     }
+  }
+
+  if (!nearestDeliverer) {
+    const error = new Error(
+      "Cannot deliver to you from this location right now"
+    );
+    error.name = "NoDelivererError";
+    throw error;
   }
 
   console.log(minTime, minDist);
