@@ -114,13 +114,53 @@ exports.currentOrder = async (req, res, next) => {
   res.json(resJson);
 };
 
-exports.finishOrder = async (req, res, next) => {
-  // Deliverer finish order route
-  let deliverer = req.user;
+exports.updateOrder = async (req, res, next) => {
+  const action = req.query.action;
 
   if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
     return res.status(400).json({ error: "Invalid order id" });
   }
+
+  if (action === "collect") {
+    return await collectOrder(req, res, next);
+  } else if (action === "deliver") {
+    return await deliverOrder(req, res, next);
+  } else {
+    return res.status(400).json({ error: "Invalid action" });
+  }
+};
+
+const collectOrder = async (req, res, next) => {
+  // Collect order route
+  let deliverer = req.user;
+
+  let order = await Order.findById(req.params.id);
+
+  if (!order) {
+    return res.status(406).json({ error: "Order not found" });
+  }
+
+  if (order.deliveryBy._id.toString() !== deliverer._id.toString()) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
+  if (order.status !== 2) {
+    return res.status(406).json({ error: "Order not ready for collection" });
+  }
+
+  order.status = 1;
+
+  await order.save({
+    validateBeforeSave: true,
+    isNew: false,
+  });
+
+  res.json({ success: true });
+};
+
+const deliverOrder = async (req, res, next) => {
+  // Deliverer finish order route
+  let deliverer = req.user;
 
   let order = await Order.findById(req.params.id);
 

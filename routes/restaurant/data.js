@@ -144,6 +144,38 @@ exports.setImage = async (req, res, next) => {
   });
 };
 
+exports.orderCooked = async (req, res, next) => {
+  // Order cooked route
+  let restaurant = req.user;
+
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    return res.status(400).json({ error: "Invalid order id" });
+  }
+
+  let order = await Order.findById(req.params.id);
+
+  if (!order) {
+    return res.status(406).json({ error: "Order not found" });
+  }
+
+  if (order.from.toString() !== restaurant._id.toString()) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
+  if (order.status !== 3) {
+    return res.status(400).json({ error: "Invalid order status" });
+  }
+
+  order.status = 2;
+
+  await order.save({
+    validateBeforeSave: true,
+    isNew: false,
+  });
+
+  res.json({ success: true, message: "Order status updated" });
+};
+
 exports.menu = async (req, res, next) => {
   // Restaurant menu route
   let restaurant = req.user;
