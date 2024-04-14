@@ -428,7 +428,7 @@ exports.reviewRestaurant = async (req, res, next) => {
 
   restaurant.rating = Math.round(
     (restaurant.rating * restaurant.reviews.length + Number(req.body.rating)) /
-      (restaurant.reviews.length + 1)
+    (restaurant.reviews.length + 1)
   );
 
   restaurant.reviews.push({
@@ -482,7 +482,7 @@ exports.reviewDeliverer = async (req, res, next) => {
 
   deliverer.rating = Math.round(
     (deliverer.rating * deliverer.reviews.length + Number(req.body.rating)) /
-      (deliverer.reviews.length + 1)
+    (deliverer.reviews.length + 1)
   );
 
   deliverer.reviews.push({
@@ -640,6 +640,8 @@ exports.recommendations = async (req, res, next) => {
   res.json(resJson.slice(0, LIMIT));
 };
 
+const dotenv = require("dotenv");
+dotenv.config();
 const Razorpay = require("razorpay");
 const Transaction = require("../../models/Transaction");
 

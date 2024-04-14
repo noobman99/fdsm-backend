@@ -33,5 +33,5 @@ router.get("/offers", dataEndpoints.offers);
 router.get("/recommendations", dataEndpoints.recommendations);
 
 router.post("/order/checkout", dataEndpoints.checkout);
-router.put("/order/confirm/:id", dataEndpoints.confirmPayment);
+router.put("/order/confirm", dataEndpoints.confirmPayment);
 module.exports = router;
