@@ -397,3 +397,85 @@ exports.balances = async (req, res, next) => {
 
   res.json(resJson);
 };
+
+exports.stats = async (req, res, next) => {
+  // Statistics route
+  const statType = req.query.type;
+
+  let orderFilter;
+
+  if (statType === "today") {
+    orderFilter = {
+      createdAt: {
+        $gte: new Date(new Date().setHours(0, 0, 0)),
+        $lt: new Date(new Date().setHours(23, 59, 59)),
+      },
+    };
+  } else if (statType === "week") {
+    orderFilter = {
+      createdAt: {
+        $gte: new Date(new Date().setDate(new Date().getDate() - 7)),
+      },
+    };
+  } else if (statType === "month") {
+    orderFilter = {
+      createdAt: {
+        $gte: new Date(new Date().setMonth(new Date().getMonth() - 1)),
+      },
+    };
+  } else if (statType === "year") {
+    orderFilter = {
+      createdAt: {
+        $gte: new Date(new Date().setFullYear(new Date().getFullYear() - 1)),
+      },
+    };
+  } else {
+    orderFilter = {};
+  }
+
+  let orders = await Order.aggregate([
+    {
+      $match: orderFilter,
+    },
+    {
+      $group: {
+        _id: "$from",
+        total: { $sum: "$total" },
+        count: { $sum: 1 },
+      },
+    },
+    {
+      $sort: { count: -1 },
+    },
+  ]);
+
+  console.log(orders);
+
+  let numOrders = 0,
+    totalRevenue = 0;
+  for (let order of orders) {
+    numOrders += order.count;
+    totalRevenue += order.total;
+  }
+
+  let numCustomers = await Customer.countDocuments({});
+  let numDeliverers = await Deliverer.countDocuments({});
+  let numRestaurants = await Restaurant.countDocuments({});
+  let topRes = [];
+
+  if (numOrders) {
+    const idList = orders.slice(0, 5).map((order) => order._id);
+    topRes = await Restaurant.find({ _id: { $in: idList } });
+    console.log(topRes);
+    console.log(idList);
+  }
+
+  res.json({
+    numOrders,
+    totalRevenue,
+    totalCust: numCustomers,
+    totalDel: numDeliverers,
+    totalRest: numRestaurants,
+    topRes: topRes.length ? topRes.map((res) => res.name) : [],
+  });
+};
