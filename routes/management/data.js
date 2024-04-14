@@ -12,6 +12,7 @@ const {
   formatBalance,
 } = require("../../helpers/DataFormatters");
 const Offer = require("../../models/Offer");
+const Balance = require("../../models/Balance");
 
 const router = express.Router();
 
@@ -177,10 +178,25 @@ exports.markPaid = async (req, res, next) => {
     await order.save({ isNew: false });
   }
 
-  const balSheet = await Balance.findOne({
+  let balSheet = await Balance.findOne({
     month: new Date().getMonth(),
     year: new Date().getFullYear(),
   });
+
+  if (!balSheet) {
+    let month = new Date().getMonth();
+    month = month ? month - 1 : 11;
+    let year = new Date().getFullYear();
+    year = month !== 11 ? year : year - 1;
+    balSheet = await Balance.findOne({ month, year });
+  }
+
+  if (!balSheet) {
+    balSheet = await Balance.create({
+      month: new Date().getMonth(),
+      year: new Date().getFullYear(),
+    });
+  }
 
   balSheet.toCollect -= total;
   balSheet.collected += total;
@@ -276,10 +292,25 @@ exports.markPaidRes = async (req, res, next) => {
     await order.save({ isNew: false });
   }
 
-  const balSheet = await Balance.findOne({
+  let balSheet = await Balance.findOne({
     month: new Date().getMonth(),
     year: new Date().getFullYear(),
   });
+
+  if (!balSheet) {
+    let month = new Date().getMonth();
+    month = month ? month - 1 : 11;
+    let year = new Date().getFullYear();
+    year = month !== 11 ? year : year - 1;
+    balSheet = await Balance.findOne({ month, year });
+  }
+
+  if (!balSheet) {
+    balSheet = await Balance.create({
+      month: new Date().getMonth(),
+      year: new Date().getFullYear(),
+    });
+  }
 
   total = total * 0.9;
   balSheet.toGive -= total;
