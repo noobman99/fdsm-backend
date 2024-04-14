@@ -32,3 +32,4 @@ const BalanceSchema = new mongoose.Schema({
 });
 
 const Balance = mongoose.model("Balance", BalanceSchema);
+module.exports = Balance;
