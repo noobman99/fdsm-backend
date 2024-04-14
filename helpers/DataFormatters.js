@@ -343,7 +343,7 @@ exports.formatBalance = (balance) => {
     year: balance.year,
     toCollect: balance.toCollect,
     collected: balance.collected,
-    surplus: balance.inHand,
+    inHand: balance.inHand,
     toGive: balance.toGive,
     given: balance.given,
   };
