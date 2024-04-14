@@ -14,6 +14,7 @@ const mongoose = require("mongoose");
 const Dish = require("../../models/Dish");
 const Deliverer = require("../../models/Deliverer");
 const Offer = require("../../models/Offer");
+const Balance = require("../../models/Balance");
 
 // Routes
 
@@ -384,10 +385,17 @@ exports.newOrder = async (req, res, next) => {
     isNew: false,
   });
 
-  const balSheet = await Balance.findOne({
+  let balSheet = await Balance.findOne({
     month: new Date().getMonth(),
     year: new Date().getFullYear(),
   });
+
+  if (!balSheet) {
+    balSheet = await Balance.create({
+      month: new Date().getMonth(),
+      year: new Date().getFullYear(),
+    });
+  }
 
   balSheet.toCollect += total;
   balSheet.toGive += total * 0.9;
@@ -684,6 +692,7 @@ exports.confirmPayment = async (req, res, next) => {
     return res.status(400).json({ message: "Invalid transaction" });
   }
 
-  res.status(200).json({ success: true, message: "Payment successful", transaction });
-}
-
+  res
+    .status(200)
+    .json({ success: true, message: "Payment successful", transaction });
+};
