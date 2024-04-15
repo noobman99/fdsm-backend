@@ -449,18 +449,23 @@ exports.stats = async (req, res, next) => {
     },
   ]);
 
-  console.log(orders);
+  // console.log(orders);
 
   let numOrders = 0,
     totalRevenue = 0;
   for (let order of orders) {
     numOrders += order.count;
-    totalRevenue += order.total;
+    totalRevenue += order.total * 0.1;
   }
 
   let numCustomers = await Customer.countDocuments({});
+  let numNewCusts = (await Customer.aggregate([{ $match: orderFilter }]))
+    .length;
   let numDeliverers = await Deliverer.countDocuments({});
+  let numNewDel = (await Deliverer.aggregate([{ $match: orderFilter }])).length;
   let numRestaurants = await Restaurant.countDocuments({});
+  let numNewRes = (await Restaurant.aggregate([{ $match: orderFilter }]))
+    .length;
   let topRes = [];
 
   if (numOrders) {
@@ -474,8 +479,11 @@ exports.stats = async (req, res, next) => {
     numOrders,
     totalRevenue,
     totalCust: numCustomers,
+    newCust: numNewCusts,
     totalDel: numDeliverers,
+    newDel: numNewDel,
     totalRest: numRestaurants,
+    newRest: numNewRes,
     topRes: topRes.length ? topRes.map((res) => res.name) : [],
   });
 };
