@@ -397,7 +397,11 @@ exports.newOrder = async (req, res, next) => {
     });
   }
 
-  balSheet.toCollect += total;
+  if (req.body.isPaid === 1) {
+    balSheet.collected += total;
+  } else {
+    balSheet.toCollect += total;
+  }
   balSheet.toGive += total * 0.9;
 
   await balSheet.save({ isNew: false });
@@ -436,7 +440,7 @@ exports.reviewRestaurant = async (req, res, next) => {
 
   restaurant.rating = Math.round(
     (restaurant.rating * restaurant.reviews.length + Number(req.body.rating)) /
-    (restaurant.reviews.length + 1)
+      (restaurant.reviews.length + 1)
   );
 
   restaurant.reviews.push({
@@ -490,7 +494,7 @@ exports.reviewDeliverer = async (req, res, next) => {
 
   deliverer.rating = Math.round(
     (deliverer.rating * deliverer.reviews.length + Number(req.body.rating)) /
-    (deliverer.reviews.length + 1)
+      (deliverer.reviews.length + 1)
   );
 
   deliverer.reviews.push({
