@@ -352,7 +352,7 @@ exports.createOffer = async (req, res, next) => {
       isNew: true,
     });
   } catch (err) {
-    if (err.name === "ValidationError") {
+    if (err.name === "MongoServerError") {
       return res.status(400).json({ error: "Not unique offer code!" });
     } else {
       console.error(err);
