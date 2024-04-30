@@ -17,7 +17,7 @@ RAZORPAY_KEY_SECRET=""
 PORT=8080
 ```
 
-3. Run the app.py file
+3. Run the index.js file
 ```bash
 npm start
 ```
